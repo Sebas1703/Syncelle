@@ -58,8 +58,8 @@ class AppController {
             // Desarrollo: Next.js corre en puerto 3000
             window.location.href = `http://localhost:3000/site/${projectId}`; 
         } else {
-            // Producción: Asumimos que Next.js manejará la ruta /site/
-            window.location.href = `/site/${projectId}`;
+            // Producción: Redirigir a la App Next.js en Vercel
+            window.location.href = `https://syncelle-98d6nqz13-sebas1703s-projects.vercel.app/site/${projectId}`;
         }
         return;
       }
