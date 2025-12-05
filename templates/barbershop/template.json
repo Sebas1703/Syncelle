@@ -1,0 +1,63 @@
+{
+  "id": "barbershop",
+  "name": "Barbershop",
+  "slug": "barbershop",
+  "entry": "templates/Barbershop/index.html",
+  "tags": ["barbershop","barbería","peluquería","barbero","grooming","afeitado","fade","corte","haircut"],
+  "selectors": {
+    "titulo": "[data-ai='titulo']",
+    "eslogan": "[data-ai='eslogan']",
+    "cta.primario": "[data-ai='cta.primario']",
+    "cta.primario.link": "[data-ai-link='cta.primario.link']",
+    "cta.secundario": "[data-ai='cta.secundario']",
+
+    "hero.cta.titulo": "[data-ai='hero.cta.titulo']",
+    "hero.cta.boton": "[data-ai='hero.cta.boton']",
+    "hero.cta.link": "[data-ai-link='hero.cta.link']",
+
+    "about.titulo": "[data-ai='about.titulo']",
+    "about.subtitulo": "[data-ai='about.subtitulo']",
+    "about.descripcion": "[data-ai='about.descripcion']",
+
+    "equipo[].nombre": "[data-ai^='equipo'][data-ai$='.nombre']",
+
+    "navegacion.home": "[data-ai='navegacion.home']",
+    "navegacion.about": "[data-ai='navegacion.about']",
+    "navegacion.servicios": "[data-ai='navegacion.servicios']",
+    "navegacion.precios": "[data-ai='navegacion.precios']",
+    "navegacion.contacto": "[data-ai='navegacion.contacto']",
+
+    "promocion.titulo": "[data-ai='promocion.titulo']",
+    "promocion.descripcion": "[data-ai='promocion.descripcion']",
+    "promocion.codigo": "[data-ai='promocion.codigo']",
+
+    "servicios.titulo": "[data-ai='servicios.titulo']",
+    "servicios[].nombre": "[data-ai^='servicios'][data-ai$='.nombre']",
+    "servicios[].precio": "[data-ai^='servicios'][data-ai$='.precio']",
+
+    "reservas.titulo": "[data-ai='reservas.titulo']",
+    "reservas.descripcion": "[data-ai='reservas.descripcion']",
+
+    "precios.titulo": "[data-ai='precios.titulo']",
+    "precios.subtitulo": "[data-ai='precios.subtitulo']",
+    "precios[].servicio": "[data-ai^='precios'][data-ai$='.servicio']",
+    "precios[].precio": "[data-ai^='precios'][data-ai$='.precio']",
+
+    "contacto.titulo": "[data-ai='contacto.titulo']",
+    "contacto.subtitulo": "[data-ai='contacto.subtitulo']",
+    "contacto.telefono": "[data-ai='contacto.telefono']",
+    "contacto.email": "[data-ai='contacto.email']",
+    "contacto.horario.titulo": "[data-ai='contacto.horario.titulo']",
+    "contacto.horario.horas": "[data-ai='contacto.horario.horas']",
+
+    "sucursales.titulo": "[data-ai='sucursales.titulo']",
+    "sucursales[].nombre": "[data-ai^='sucursales'][data-ai$='.nombre']",
+    "sucursales[].direccion": "[data-ai^='sucursales'][data-ai$='.direccion']",
+
+    "formulario.placeholder.nombre": "[data-ai-placeholder='formulario.placeholder.nombre']",
+    "formulario.placeholder.telefono": "[data-ai-placeholder='formulario.placeholder.telefono']",
+    "formulario.placeholder.mensaje": "[data-ai-placeholder='formulario.placeholder.mensaje']",
+
+    "footer.copyright": "[data-ai='footer.copyright']"
+  }
+} 

@@ -1,0 +1,41 @@
+.
+├── AI
+│   ├── ai.js
+│   ├── prompt.html
+│   └── render.html
+├── Copia de AI
+│   ├── ai.js
+│   ├── prompt.html
+│   └── render.html
+├── estructura_proyecto.txt
+├── favicon.png
+├── founder_&_CEO.jpeg
+├── index.html
+├── logo_syncelle_optimized.webp
+├── logo1.png
+├── logo2.png
+├── logo2000x2000.jpeg
+├── mockup.png
+├── netlify
+│   └── functions
+│       └── openai-proxy.js
+├── netlify.toml
+├── package-lock.json
+├── package.json
+├── pages
+│   ├── contacto.html
+│   ├── favicon.png
+│   ├── nosotros.html
+│   └── servicios.html
+├── README.md
+├── script.js
+├── styles.css
+└── templates
+    └── klassy
+        └── klassy_cafe_actualizada
+            ├── assets
+            ├── index.html
+            ├── prepros-6.config
+            └── prepros.config
+
+10 directories, 29 files

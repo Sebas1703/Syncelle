@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Render FINAL | Plantilla + IA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Agregar fuentes del proyecto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Paleta de colores del proyecto Syncelle */
+    :root {
+      --fondo: #0B0B0B;
+      --texto: #FFFFFF;
+      --verde-acento: #00F4AE;
+      --verde-secundario: #00DA8E;
+      --fuente: 'Inter', 'Poppins', Arial, sans-serif;
+      
+      /* Variables originales mantenidas para compatibilidad */
+      --bg: #0f0f0f;
+      --fg: #f5f5f5;
+      --muted: #9ca3af;
+      --danger: #ff6b6b;
+      --border: #2a2a2a;
+    }
+    
+    html, body {
+      margin: 0; 
+      padding: 0;
+      background: var(--fondo);
+      color: var(--texto);
+      font-family: var(--fuente);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header con estilos del proyecto */
+    header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem;
+      width: 100%;
+      border-bottom: 1px solid #222;
+      background: var(--fondo);
+    }
+    
+    header h1 {
+      font-size: 1.2rem;
+      color: var(--verde-acento);
+      margin: 0 0 .5rem 0;
+      font-weight: 700;
+      font-family: var(--fuente);
+    }
+    
+    #meta {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+    
+    .badge {
+      background: #1e1e1e;
+      padding: .2rem .6rem;
+      border-radius: .3rem;
+      border: 1px solid var(--border);
+      color: var(--texto);
+      font-size: .8rem;
+    }
+    
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 0 1.25rem 1.25rem;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    iframe {
+      width: 100%;
+      height: calc(100vh - 200px);
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .error {
+      color: var(--danger);
+      font-weight: 600;
+      margin-bottom: .5rem;
+      white-space: pre-wrap;
+      background: rgba(255, 107, 107, 0.1);
+      padding: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--danger);
+    }
+    
+    details {
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    details summary {
+      background: #1e1e1e;
+      padding: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--verde-acento);
+      transition: background 0.2s;
+    }
+    
+    details summary:hover {
+      background: rgba(0, 244, 174, 0.1);
+    }
+    
+    pre {
+      background: #1e1e1e;
+      border: none;
+      padding: 1rem;
+      border-radius: 0;
+      overflow: auto;
+      font-size: .85rem;
+      max-height: 300px;
+      margin: 0;
+      color: var(--texto);
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    }
+    
+    /* Footer con estilos del proyecto */
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+      width: 100%;
+      text-align: center;
+      border-top: 1px solid #222;
+      background: var(--fondo);
+    }
+    
+    footer small {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      header, footer {
+        padding: 1rem;
+      }
+      
+      header h1 {
+        font-size: 1rem;
+      }
+      
+      iframe {
+        height: calc(100vh - 180px);
+      }
+      
+      main {
+        padding: 0 1rem 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎨 Render Final · Syncelle AI</h1>
+    <div id="meta"></div>
+  </header>
+
+  <main>
+    <div id="errors" class="error" style="display:none;"></div>
+    <iframe id="preview" title="preview"></iframe>
+
+    <details>
+      <summary>📋 Ver JSON recibido</summary>
+      <pre id="json-dump"></pre>
+    </details>
+  </main>
+
+  <footer>
+    <small>&copy; 2025 Syncelle. Todos los derechos reservados. | Renderizado con IA</small>
+  </footer>
+
+  <!-- Load AI modules -->
+  <script src="../src/utils/project-store.js"></script>
+  <script src="../src/ai/ai-service.js"></script>
+  <script src="../src/ai/template-manager.js"></script>
+  <script src="../src/ai/content-renderer.js"></script>
+  <script src="../src/ai/app-controller.js"></script>
+
+  <script>
+    /**
+     * Render Page Controller
+     * Uses the modular system to render stored content
+     */
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check if modules are loaded
+      if (typeof AppController === 'undefined') {
+        document.getElementById('errors').textContent = 'Error: AI modules not loaded';
+        document.getElementById('errors').style.display = 'block';
+        return;
+      }
+
+      const appController = new AppController();
+      const errBox = document.getElementById('errors');
+      const dump = document.getElementById('json-dump');
+      const meta = document.getElementById('meta');
+      const iframe = document.getElementById('preview');
+
+      // Render stored content using the new modular system
+      appController.renderStoredContent(iframe, errBox, meta, dump)
+        .catch(error => {
+          console.error('Render failed:', error);
+          errBox.textContent = `Error al renderizar: ${error.message}`;
+          errBox.style.display = 'block';
+        });
+    });
+  </script>
+</body>
+</html>

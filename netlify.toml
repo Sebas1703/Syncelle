@@ -1,0 +1,14 @@
+[build]
+  # Comando para instalar dependencias de React, compilarlo y moverlo a /v2
+  command = "npm run build"
+  # Publicar el directorio actual (raíz)
+  publish = "."
+  
+  functions = "netlify/functions"
+
+[dev]
+  framework = "#custom"
+  command = "npx live-server ."
+  port = 9000
+  targetPort = 3000
+  autoLaunch = true

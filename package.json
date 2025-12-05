@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "scripts": {
+    "build": "cd renderer && npm install && npm run build && cd .. && node move-build.js"
+  }
+}

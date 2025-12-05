@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Generar tu página con IA – Syncelle</title>
+
+    <!-- Mantengo tu hoja de estilos global para que herede el look & feel del index -->
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Fuentes, igual que en index -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Estilos mínimos, aislados, solo para esta vista -->
+    <style>
+      :root{
+        --ai-brand: var(--brand, #11d19f);
+        --ai-muted: var(--muted, #9ca3af);
+        --ai-surface: var(--surface, #111111);
+        --ai-border: var(--border, #2a2a2a);
+        --ai-fg: var(--fg, #f5f5f5);
+      }
+
+      .ai-wrapper{
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 4rem 1rem 6rem;
+      }
+
+      .ai-title{
+        text-align: center;
+        font-size: clamp(1.8rem, 5vw, 2.4rem);
+        margin-bottom: 1.5rem;
+      }
+
+      /* Contenedor del textarea con animación AI */
+      .ai-form-container {
+        position: relative;
+        margin: 2rem 0;
+      }
+
+      .ai-form textarea{
+        width: 100%;
+        min-height: 220px;
+        background: var(--ai-surface);
+        color: var(--ai-fg);
+        border: 1px solid var(--ai-border);
+        border-radius: 10px;
+        padding: 1rem 1.1rem;
+        font-family: inherit;
+        resize: vertical;
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+      }
+
+      /* Animación de luces AI - Contenedor principal */
+      .ai-glow-container {
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        border-radius: 14px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+        z-index: 1;
+      }
+
+      .ai-glow-container.active {
+        opacity: 1;
+      }
+
+      /* Múltiples capas de luces giratorias */
+      .ai-glow-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 14px;
+        background: conic-gradient(
+          from 0deg,
+          transparent 0%,
+          rgba(0, 244, 174, 0.8) 10%,
+          rgba(138, 43, 226, 0.6) 25%,
+          rgba(255, 20, 147, 0.7) 40%,
+          rgba(0, 191, 255, 0.6) 55%,
+          rgba(50, 205, 50, 0.8) 70%,
+          rgba(255, 165, 0, 0.7) 85%,
+          transparent 100%
+        );
+        animation: ai-rotate 4s linear infinite;
+      }
+
+      .ai-glow-ring:nth-child(2) {
+        animation: ai-rotate 6s linear infinite reverse;
+        background: conic-gradient(
+          from 45deg,
+          transparent 0%,
+          rgba(255, 20, 147, 0.6) 15%,
+          rgba(0, 191, 255, 0.8) 30%,
+          rgba(138, 43, 226, 0.5) 45%,
+          rgba(0, 244, 174, 0.7) 60%,
+          rgba(255, 165, 0, 0.6) 75%,
+          rgba(50, 205, 50, 0.5) 90%,
+          transparent 100%
+        );
+      }
+
+      .ai-glow-ring:nth-child(3) {
+        animation: ai-rotate 8s linear infinite;
+        background: conic-gradient(
+          from 90deg,
+          transparent 0%,
+          rgba(138, 43, 226, 0.7) 20%,
+          rgba(0, 244, 174, 0.5) 40%,
+          rgba(255, 165, 0, 0.8) 60%,
+          rgba(0, 191, 255, 0.6) 80%,
+          transparent 100%
+        );
+      }
+
+      /* Efecto de desenfoque y brillo */
+      .ai-glow-blur {
+        position: absolute;
+        inset: -8px;
+        border-radius: 18px;
+        background: conic-gradient(
+          from 180deg,
+          transparent 0%,
+          rgba(0, 244, 174, 0.3) 20%,
+          rgba(138, 43, 226, 0.2) 40%,
+          rgba(255, 20, 147, 0.3) 60%,
+          rgba(0, 191, 255, 0.2) 80%,
+          transparent 100%
+        );
+        filter: blur(8px);
+        animation: ai-rotate 10s linear infinite reverse;
+      }
+
+      /* Partículas flotantes */
+      .ai-particles {
+        position: absolute;
+        inset: -20px;
+        pointer-events: none;
+        overflow: hidden;
+        border-radius: 20px;
+      }
+
+      .ai-particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(0, 244, 174, 0.8);
+        border-radius: 50%;
+        animation: ai-float 3s ease-in-out infinite;
+      }
+
+      .ai-particle:nth-child(1) {
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+        background: rgba(138, 43, 226, 0.7);
+      }
+
+      .ai-particle:nth-child(2) {
+        top: 60%;
+        right: 15%;
+        animation-delay: 1s;
+        background: rgba(255, 20, 147, 0.6);
+      }
+
+      .ai-particle:nth-child(3) {
+        bottom: 30%;
+        left: 20%;
+        animation-delay: 2s;
+        background: rgba(0, 191, 255, 0.8);
+      }
+
+      .ai-particle:nth-child(4) {
+        top: 40%;
+        right: 25%;
+        animation-delay: 1.5s;
+        background: rgba(255, 165, 0, 0.7);
+      }
+
+      .ai-particle:nth-child(5) {
+        bottom: 20%;
+        right: 10%;
+        animation-delay: 0.5s;
+        background: rgba(50, 205, 50, 0.6);
+      }
+
+      /* Animaciones */
+      @keyframes ai-rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      @keyframes ai-float {
+        0%, 100% { 
+          transform: translateY(0px) scale(1);
+          opacity: 0.8;
+        }
+        50% { 
+          transform: translateY(-10px) scale(1.2);
+          opacity: 1;
+        }
+      }
+
+      /* Efecto de pulso en el centro */
+      .ai-pulse {
+        position: absolute;
+        inset: 20px;
+        border-radius: 8px;
+        background: radial-gradient(
+          circle at center,
+          rgba(0, 244, 174, 0.1) 0%,
+          transparent 70%
+        );
+        animation: ai-pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes ai-pulse {
+        0%, 100% { 
+          transform: scale(1);
+          opacity: 0.3;
+        }
+        50% { 
+          transform: scale(1.05);
+          opacity: 0.6;
+        }
+      }
+
+      /* Estilos del botón mejorados */
+      .ai-actions{
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .ai-btn-primary{
+        display: inline-block;
+        background: var(--ai-brand);
+        color: #000;
+        border: 1px solid var(--ai-brand);
+        border-radius: 10px;
+        padding: 0.9rem 1.6rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .ai-btn-primary:hover{
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 244, 174, 0.3);
+      }
+
+      .ai-btn-primary:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .ai-loading{
+        margin-top: 1.25rem;
+        text-align: center;
+        color: var(--ai-muted);
+        font-weight: 500;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .ai-wrapper {
+          padding: 2rem 1rem 4rem;
+        }
+        
+        .ai-form textarea {
+          min-height: 180px;
+        }
+        
+        .ai-glow-container {
+          top: -3px;
+          left: -3px;
+          right: -3px;
+          bottom: -3px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header igual que en tu index -->
+    <header class="header">
+      <div class="header__container">
+        <div class="header__row">
+          <div class="logo-wrapper">
+            <a href="../index.html">
+              <img src="../logo2.png" alt="Logo Syncelle" class="logo">
+            </a>
+          </div>
+          <button class="nav-toggle" aria-label="Abrir menú" aria-controls="main-menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+        <nav class="nav">
+          <ul class="nav__menu" id="main-menu">
+            <li><a href="../index.html" class="nav__link">Inicio</a></li>
+            <li><a href="/pages/nosotros.html" class="nav__link">Sobre Nosotros</a></li>
+            <li><a href="/AI/prompt.html" class="nav__link nav__link--active">Crea con IA</a></li>
+            <li><a href="/pages/servicios.html" class="nav__link">Servicios</a></li>
+            <li><a href="/pages/contacto.html" class="nav__link">Contáctanos</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="ai-wrapper">
+      <h1 class="ai-title">Describe tu página ideal</h1>
+      <div style="background-color: #1e1e1e; border-left: 4px solid #11d19f; padding: 1rem; margin-top: 1rem; border-radius: 8px; color: #ccc; font-size: 0.9rem;">
+        <strong>🧠 Consejos para mejores resultados:</strong>
+        <ul style="padding-left: 1rem; margin-top: 0.5rem;">
+          <li>✅ Sé breve y claro: describe qué tipo de página necesitas y su propósito.</li>
+          <li>✅ Incluye secciones clave: Inicio, Sobre Nosotros, Servicios, Contacto.</li>
+          <li>✅ Usa nombres reales para tu negocio, ayudan a personalizar el diseño.</li>
+          <li>🚫 Evita escribir listas demasiado largas o textos confusos.</li>
+          <li>🚫 No incluyas explicaciones técnicas ni comentarios en tu mensaje.</li>
+          <li>📱 El diseño se adapta automáticamente a celulares.</li>
+        </ul>
+      </div>
+      <br>
+
+      <form id="prompt-form" class="ai-form">
+        <div class="ai-form-container">
+          <textarea
+            id="prompt-input"
+            placeholder="Ejemplo: Genera una landing profesional para una barbería premium en Bogotá llamada Barber Bros. Incluye hero con CTA, servicios con precios, testimonios, FAQs, formulario y modo oscuro..."
+            rows="8"
+          ></textarea>
+                     <div class="ai-glow-container" id="ai-glow">
+            <div class="ai-glow-ring"></div>
+            <div class="ai-glow-ring"></div>
+            <div class="ai-glow-ring"></div>
+            <div class="ai-glow-blur"></div>
+            <div class="ai-particles">
+              <div class="ai-particle"></div>
+              <div class="ai-particle"></div>
+              <div class="ai-particle"></div>
+              <div class="ai-particle"></div>
+              <div class="ai-particle"></div>
+            </div>
+            <div class="ai-pulse"></div>
+          </div>
+        </div>
+
+        <div class="ai-actions">
+          <button type="submit" class="ai-btn-primary">Generar Página</button>
+        </div>
+      </form>
+
+      <div id="loading" class="ai-loading" style="display: none;">Generando tu página...</div>
+    </main>
+
+    <footer>
+      <p style="text-align: center; padding: 2rem 1rem;">&copy; 2024 Syncelle. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Supabase CDN (Security First) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Load main site script for hamburger menu -->
+    <script src="../script.js"></script>
+    
+    <!-- Load AI modules in correct order -->
+    <script src="../src/lib/supabase-client.js"></script>
+    <script src="../src/auth/auth-service.js"></script>
+    <script src="../src/utils/project-store.js"></script>
+    <script src="../src/ai/ai-service.js"></script>
+    <script src="../src/ai/template-manager.js"></script>
+    <script src="../src/ai/content-renderer.js"></script>
+    <script src="../src/ai/app-controller.js"></script>
+    <script src="ai.js"></script>
+
+    <!-- Auth Guard Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const auth = new window.AuthService();
+        // Verificamos sesión antes de permitir interactuar
+        const user = await auth.requireAuth();
+        if (user) {
+          console.log('Usuario autenticado:', user.email);
+        }
+      });
+    </script>
+  </body>
+</html>
