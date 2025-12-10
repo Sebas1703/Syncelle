@@ -1,6 +1,6 @@
 'use client';
 
-import Navbar from '../Navbar';
+import Navbar from './Navbar';
 
 export default function ConstructionPage({ title = "¡Esta página está en construcción!" }) {
   return (
