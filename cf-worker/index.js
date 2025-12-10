@@ -484,6 +484,11 @@ function isAllowedOrigin(origin, primaryOrigin) {
       return true;
     }
 
+    // Permitir cualquier subdominio de Vercel (Previews y Producción)
+    if (parsed.hostname.endsWith(".vercel.app") || parsed.hostname === "vercel.app") {
+      return true;
+    }
+
     if (primaryOrigin && origin === primaryOrigin) {
       return true;
     }

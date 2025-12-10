@@ -1,30 +1,75 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Bloquear scroll cuando el menú está abierto
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('scroll-locked');
+    } else {
+      document.body.classList.remove('scroll-locked');
+    }
+  }, [isMenuOpen]);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
-    <header className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo2.png" alt="Syncelle Logo" width={120} height={40} className="object-contain" />
-        </Link>
+    <header className="header">
+      <div className="header__container">
         
-        <nav className="hidden md:flex gap-8">
-          <Link href="/" className="text-white hover:text-emerald-400 transition-colors">Inicio</Link>
-          <Link href="#como-funciona" className="text-zinc-400 hover:text-white transition-colors">Cómo funciona</Link>
-          <Link href="#planes" className="text-zinc-400 hover:text-white transition-colors">Planes</Link>
+        <div className="header__row">
+            <div className="logo-wrapper">
+                <Link href="/" onClick={closeMenu}>
+                    <Image 
+                        src="/logo2.png" 
+                        alt="Syncelle Logo" 
+                        width={120} 
+                        height={40} 
+                        className="logo" 
+                        priority 
+                    />
+                </Link>
+            </div>
+
+            <button 
+                className="nav-toggle" 
+                aria-label="Abrir menú" 
+                aria-expanded={isMenuOpen}
+                onClick={toggleMenu}
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <nav className="nav">
+            {/* Overlay para cerrar al hacer clic fuera */}
+            {isMenuOpen && (
+                <div className="nav-overlay" onClick={closeMenu}></div>
+            )}
+            
+            <ul className={`nav__menu ${isMenuOpen ? 'is-active' : ''}`}>
+                <li><Link href="/" className="nav__link" onClick={closeMenu}>Inicio</Link></li>
+                <li><Link href="/nosotros" className="nav__link" onClick={closeMenu}>Sobre Nosotros</Link></li>
+                <li><Link href="/dashboard" className="nav__link" onClick={closeMenu}>Crea con IA</Link></li>
+                <li><Link href="/servicios" className="nav__link" onClick={closeMenu}>Servicios</Link></li>
+                <li><Link href="/contacto" className="nav__link" onClick={closeMenu}>Contáctanos</Link></li>
+            </ul>
         </nav>
 
-        <div className="flex gap-4">
-          <Link href="/login" className="text-white font-medium hover:text-emerald-400 transition-colors px-4 py-2">
-            Iniciar Sesión
-          </Link>
-          <Link href="/login" className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-5 py-2 rounded-full transition-colors">
-            Empezar
-          </Link>
-        </div>
       </div>
     </header>
   );
 }
-
