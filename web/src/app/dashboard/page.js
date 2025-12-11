@@ -25,9 +25,21 @@ export default function Dashboard() {
 
       setStatus('Guardando proyecto...');
 
-      // 2. Obtener usuario actual
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Sesión expirada");
+      // 2. Obtener sesión robusta
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      let user = session?.user;
+
+      // Si no hay sesión válida en memoria, intentar refrescar o getUser
+      if (!user) {
+        const { data: { user: refreshedUser }, error: refreshError } = await supabase.auth.getUser();
+        if (refreshError || !refreshedUser) {
+           // Guardar backup local por si acaso
+           localStorage.setItem('syncelle_pending_project', JSON.stringify({ prompt, content }));
+           throw new Error("Tu sesión expiró. Por favor, recarga la página e inicia sesión.");
+        }
+        user = refreshedUser;
+      }
 
       // 3. Guardar en Supabase
       const { data: project, error } = await supabase
