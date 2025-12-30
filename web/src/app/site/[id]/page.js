@@ -27,14 +27,17 @@ export default async function SitePage({ params }) {
 
   // Definir variables CSS dinámicas basadas en la IA
   const dynamicStyles = {
-    '--bg-page': palette.background || '#09090b', // Default zinc-950
+    '--bg-page': palette.background || '#09090b', 
     '--text-main': theme.mode === 'light' ? '#000000' : '#ffffff',
-    '--primary': palette.primary || '#10b981', // Default emerald-500
-    '--secondary': palette.secondary || '#3b82f6', // Default blue-500
-    '--surface': palette.surface || '#18181b', // Default zinc-900
+    '--primary': palette.primary || '#10b981',
+    '--secondary': palette.secondary || '#3b82f6',
+    '--surface': palette.surface || '#18181b',
     '--accent': palette.accent || '#f59e0b',
     'fontFamily': theme.typography?.bodyFont || 'sans-serif',
   };
+
+  const headingFont = theme.typography?.headingFont || 'Inter';
+  const bodyFont = theme.typography?.bodyFont || 'Inter';
 
   return (
     <main 
@@ -45,10 +48,16 @@ export default async function SitePage({ params }) {
         ...dynamicStyles
       }}
     >
-      {/* Fuente de Google Fonts si la IA la sugiere (Implementación simple) */}
+      {/* Carga dinámica de fuentes de Google */}
       <style dangerouslySetInnerHTML={{__html: `
-        @import url('https://fonts.googleapis.com/css2?family=${(theme.typography?.headingFont || 'Inter').replace(' ', '+')}:wght@400;700&display=swap');
-        h1, h2, h3, h4, h5, h6 { font-family: '${theme.typography?.headingFont || 'sans-serif'}', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=${headingFont.replace(/ /g, '+')}:wght@400;700;900&family=${bodyFont.replace(/ /g, '+')}:wght@300;400;600&display=swap');
+        
+        h1, h2, h3, h4, h5, h6 { 
+          font-family: '${headingFont}', sans-serif !important; 
+        }
+        body, p, button, span, div { 
+          font-family: '${bodyFont}', sans-serif; 
+        }
       `}} />
 
       {siteData?.blocks?.map((block, index) => (

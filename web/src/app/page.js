@@ -139,19 +139,24 @@ export default function Home() {
           </div>
         </section>
 
-        {/* FUNDADOR */}
-        <section className="max-w-4xl mx-auto mb-20">
-          <div className="bg-zinc-900/30 border border-zinc-800 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
-            <div className="flex-1 text-center md:text-left">
-              <h3 className="text-2xl font-bold mb-2">Sebastián Pérez</h3>
-              <p className="text-emerald-500 font-medium mb-6">Fundador & CEO</p>
-              <blockquote className="text-xl text-zinc-300 italic leading-relaxed">
-                "Esta visión nació de una sola idea: que cualquier persona pudiera tener su espacio digital sin barreras. Syncelle es tecnología con alma."
-              </blockquote>
+        {/* FUNDADOR - REFINADO (Sobriedad y Confianza) */}
+        <section className="max-w-3xl mx-auto mb-20">
+          <div className="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-8 flex flex-col md:flex-row gap-6 items-center hover:border-zinc-700 transition-colors">
+            {/* Foto Monocromática y Compacta */}
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-zinc-800 border border-zinc-700 overflow-hidden flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-500">
+               {/* Usamos un div con gradiente si no hay foto, o la etiqueta img si existiera */}
+               <div className="w-full h-full bg-gradient-to-br from-zinc-700 to-zinc-900" />
             </div>
-            {/* Placeholder elegante si no hay foto real cargada */}
-            <div className="w-32 h-32 md:w-48 md:h-48 rounded-full bg-zinc-800 border-4 border-zinc-900 shadow-2xl overflow-hidden flex-shrink-0 relative">
-               <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-zinc-500/20" />
+            
+            <div className="flex-1 text-center md:text-left">
+              <p className="text-lg text-zinc-300 font-medium leading-relaxed mb-3">
+                "Syncelle elimina las barreras técnicas para que cualquier negocio tenga presencia digital real, sin depender de agencias ni contratos abusivos."
+              </p>
+              <div className="flex flex-col md:flex-row items-center gap-2 justify-center md:justify-start text-sm">
+                <span className="font-bold text-white">Sebastián Pérez</span>
+                <span className="hidden md:inline text-zinc-600">•</span>
+                <span className="text-zinc-500">Fundador</span>
+              </div>
             </div>
           </div>
         </section>
