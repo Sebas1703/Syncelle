@@ -16,38 +16,49 @@ const BentoItem = ({ item, index }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.08)" }}
+      whileHover={{ y: -5 }}
       className={cn(
-        "group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-colors",
+        "group relative overflow-hidden rounded-3xl p-8 transition-all duration-300",
+        "glass-panel hover:border-white/20 hover:shadow-2xl hover:shadow-[var(--primary)]/10",
         colSpan,
         rowSpan
       )}
     >
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      {/* Fondo degradado sutil dinámico */}
+      <div 
+        className="absolute inset-0 -z-10 opacity-0 transition-opacity duration-500 group-hover:opacity-20" 
+        style={{
+            background: `radial-gradient(circle at 100% 0%, var(--primary), transparent 60%)`
+        }}
+      />
       
-      <div className="flex h-full flex-col justify-between">
+      <div className="flex h-full flex-col justify-between relative z-10">
         {/* Icono o Elemento Visual Superior */}
-        <div className="mb-4 text-4xl text-emerald-400">
-            {/* Placeholder para iconos dinámicos, por ahora un emoji o div */}
-            {item.icon || "✨"}
+        <div className="mb-6 text-4xl" style={{ color: 'var(--primary)' }}>
+            {item.icon || "✦"}
         </div>
 
         {/* Contenido Texto */}
         <div>
-          <h3 className="text-xl font-bold text-white mb-1">{item.title}</h3>
-          <p className="text-sm text-zinc-400 leading-relaxed">
+          <h3 className="text-2xl font-bold mb-2 tracking-tight" style={{ color: 'var(--text-main)' }}>
+            {item.title}
+          </h3>
+          <p className="text-base font-light leading-relaxed opacity-70" style={{ color: 'var(--text-main)' }}>
             {item.description}
           </p>
         </div>
       </div>
 
-      {/* Elemento decorativo opcional */}
+      {/* Decoración Glow */}
       {isLarge && (
-        <div className="absolute right-4 top-4 h-32 w-32 rounded-full bg-emerald-500/10 blur-3xl group-hover:bg-emerald-500/20 transition-all" />
+        <div 
+            className="absolute -right-10 -top-10 h-64 w-64 rounded-full blur-[80px] transition-all duration-700 opacity-20 group-hover:opacity-40" 
+            style={{ backgroundColor: 'var(--secondary)' }}
+        />
       )}
     </motion.div>
   );

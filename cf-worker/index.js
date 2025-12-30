@@ -368,7 +368,8 @@ Devuelve SIEMPRE un JSON válido con este esquema (Version 2):
         "subheadline": "Subtítulo persuasivo",
         "cta_primary": "Texto Botón 1",
         "cta_secondary": "Texto Botón 2 (opcional)",
-        "media_url": "URL de imagen o video de stock relevante (usar placeholders de alta calidad si no hay real)"
+        "image_prompt": "Descripción visual detallada y fotográfica para generar la imagen de fondo (ej: 'interior of a luxury minimalist coffee shop, warm lighting, 8k, architectural digest style')",
+        "media_url": "DEJAR VACIO, el frontend generará la imagen con el prompt"
       }
     },
     {
