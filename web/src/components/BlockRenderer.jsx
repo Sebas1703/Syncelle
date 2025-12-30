@@ -154,6 +154,7 @@ export default function BlockRenderer({ block, index }) {
     );
   }
 
-  return <Component data={block.data} />;
+  // Pasamos variant y style explícitamente
+  return <Component data={block.data} variant={block.variant} style={block.style} />;
 }
 

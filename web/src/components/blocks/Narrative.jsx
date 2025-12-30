@@ -1,44 +1,68 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const Narrative = ({ data }) => {
-  return (
-    <section className="py-24 px-6 max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-start">
-      <motion.div 
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        className="flex-1"
-      >
-        <h2 className="text-sm font-mono text-emerald-400 mb-4 tracking-widest uppercase">
-          {data?.title || "Our Philosophy"}
-        </h2>
-        <div className="space-y-6">
-          {data?.paragraphs?.map((p, i) => (
-            <p key={i} className="text-xl md:text-2xl text-zinc-300 leading-relaxed font-light">
-              {p}
-            </p>
-          ))}
-        </div>
-      </motion.div>
+// Utilidad simple para imágenes (duplicada para independencia del componente)
+const getImageUrl = (prompt) => {
+  if (!prompt) return null;
+  const seed = Math.floor(Math.random() * 1000);
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=800&nologo=true&seed=${seed}&model=flux`;
+};
 
-      {data?.image_url && (
+const Narrative = ({ data, variant = 'image-right', style }) => {
+  const imageUrl = data.image_url || getImageUrl(data.image_prompt || "minimalist editorial photography, architectural detail, 4k");
+  const isImageLeft = variant === 'image-left';
+
+  return (
+    <section 
+      className="py-24 px-6 w-full"
+      style={{ backgroundColor: style?.backgroundColor || 'transparent' }}
+    >
+      <div className={`max-w-7xl mx-auto flex flex-col gap-12 items-center ${isImageLeft ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+        
+        {/* TEXTO */}
+        <motion.div 
+          initial={{ opacity: 0, x: isImageLeft ? 50 : -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="flex-1"
+        >
+          <h2 className="text-sm font-mono mb-6 tracking-widest uppercase" style={{ color: 'var(--primary)' }}>
+            {data?.title || "Nuestra Filosofía"}
+          </h2>
+          <div className="space-y-6">
+            {data?.paragraphs?.map((p, i) => (
+              <p 
+                key={i} 
+                className="text-xl md:text-3xl leading-relaxed font-light"
+                style={{ color: 'var(--text-main)', opacity: 0.9 }}
+              >
+                {p}
+              </p>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* IMAGEN */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="flex-1 w-full aspect-video md:aspect-square overflow-hidden rounded-2xl"
+          transition={{ duration: 0.8 }}
+          className="flex-1 w-full aspect-[4/5] md:aspect-square overflow-hidden rounded-2xl relative shadow-2xl"
         >
           <img 
-            src={data.image_url} 
-            alt="Narrative" 
-            className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-700"
+            src={imageUrl} 
+            alt="Narrative Visual" 
+            className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
           />
+          {/* Sombra interna para integrar */}
+          <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl" />
         </motion.div>
-      )}
+
+      </div>
     </section>
   );
 };
 
 export default Narrative;
-
