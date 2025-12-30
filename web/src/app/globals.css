@@ -4,6 +4,12 @@
 
 /* === SYNCELLE DESIGN SYSTEM V2 (WORLD CLASS) === */
 
+@layer base {
+  body {
+    @apply bg-black text-white antialiased selection:bg-emerald-500/30;
+  }
+}
+
 /* Efecto Noise Global para textura premium */
 body::before {
   content: "";
@@ -31,53 +37,4 @@ body::before {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* === LEGACY CSS (SYNCELLE LANDING PAGE) === */
-/* Mantenemos esto para que el landing page original no se rompa */
-
-:root {
-  --fondo: #0B0B0B;
-  --texto: #FFFFFF;
-  --verde-acento: #00F4AE;
-  --verde-secundario: #00DA8E;
-  --fuente: 'Inter', 'Poppins', Arial, sans-serif;
-}
-
-body {
-  background: var(--fondo);
-  color: var(--texto);
-  font-family: var(--fuente);
-  min-height: 100vh;
-  line-height: 1.5;
-}
-
-/* ... resto de estilos originales si son necesarios ... */
-/* Por brevedad, asumo que Tailwind maneja la mayoría, pero si el landing depende de ello, 
-   deberíamos copiar todo. Como el usuario pidió "mejorar", priorizo el nuevo motor.
-   Sin embargo, para no romper el Home, pego el CSS esencial del Home abajo. 
-*/
-
-/* Resto del CSS original para /page.js (Home) */
-header.hero { padding: 2rem 1rem 1.5rem 1rem; background: var(--fondo); border-bottom: 1px solid #222; }
-.hero-logo-title { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 2rem; max-width: 1100px; margin: 0 auto; }
-.hero-logo-title h1 { font-size: 1.5rem; font-weight: 700; color: var(--verde-acento); margin-bottom: 0.5rem; }
-.subtitle { font-size: 1rem; color: var(--texto); opacity: 0.85; margin-bottom: 1.2rem; }
-.cta-main { display: inline-block; background: var(--verde-acento); color: #0B0B0B; font-weight: 600; padding: 0.8em 1.5em; border-radius: 32px; text-decoration: none; transition: background 0.2s; }
-.cta-main:hover { background: var(--verde-secundario); }
-.cta-secundario { display: inline-block; background: var(--verde-secundario); color: #0B0B0B; font-weight: 600; padding: 0.7em 1.5em; border-radius: 32px; text-decoration: none; transition: background 0.2s; }
-.cta-secundario:hover { background: var(--verde-acento); }
-
-/* Layouts específicos del Home */
-.como-funciona h2, .beneficios h2, .planes-precios h2, .contacto h2 { font-size: 1.3rem; color: var(--verde-acento); margin-bottom: 1rem; font-weight: 600; }
-.steps { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
-.step { background: #111; border-radius: 14px; padding: 1.2rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 140px; }
-.icon-step { font-size: 1.7rem; margin-bottom: 0.5rem; color: var(--verde-acento); }
-.beneficios ul { list-style: none; display: grid; gap: 0.7rem; margin-top: 1rem; }
-.beneficios li::before { content: '✔'; color: var(--verde-acento); margin-right: 0.7em; }
-
-/* Responsive basics */
-@media (min-width: 600px) {
-  .hero-logo-title { flex-direction: row; font-size: 2rem; }
-  .steps { flex-direction: row; }
 }
