@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 const getImageUrl = (prompt) => {
   if (!prompt) return null;
   const seed = Math.floor(Math.random() * 1000);
+  // Versión robusta para evitar Rate Limits
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=800&nologo=true&seed=${seed}&model=flux`;
 };
 

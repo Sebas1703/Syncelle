@@ -143,9 +143,12 @@ export default function Home() {
         <section className="max-w-3xl mx-auto mb-20">
           <div className="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-8 flex flex-col md:flex-row gap-6 items-center hover:border-zinc-700 transition-colors">
             {/* Foto Monocromática y Compacta */}
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-zinc-800 border border-zinc-700 overflow-hidden flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-500">
-               {/* Usamos un div con gradiente si no hay foto, o la etiqueta img si existiera */}
-               <div className="w-full h-full bg-gradient-to-br from-zinc-700 to-zinc-900" />
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-zinc-800 border border-zinc-700 overflow-hidden flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-500 relative">
+               <img 
+                 src="/founder.jpg" 
+                 alt="Sebastián Pérez" 
+                 className="w-full h-full object-cover"
+               />
             </div>
             
             <div className="flex-1 text-center md:text-left">

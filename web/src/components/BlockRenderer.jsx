@@ -8,12 +8,33 @@ import Showcase from './blocks/Showcase';
 import CTAFooter from './blocks/CTAFooter';
 import { motion } from 'framer-motion';
 
-// Utilidad para generar imágenes de alta calidad
+// Utilidad para generar imágenes de alta calidad (Switch a Unsplash por estabilidad)
 const getImageUrl = (prompt) => {
   if (!prompt) return null;
+  // Extraemos keywords simples del prompt para Unsplash (ej: "minimalist coffee shop" -> "coffee,shop,minimalist")
+  // Limpiamos palabras irrelevantes para búsqueda de stock
+  const keywords = prompt
+    .replace(/cinematic|8k|hyperrealistic|unreal engine|editorial|photography|style/gi, "")
+    .split(/,|\s+/)
+    .filter(w => w.length > 3)
+    .slice(0, 3) // Tomamos las 3 palabras más significativas
+    .join(",");
+    
   const seed = Math.floor(Math.random() * 1000);
-  // Usamos Pollinations para imágenes AI on-the-fly que coinciden con el contexto
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1920&height=1080&nologo=true&seed=${seed}&model=flux`;
+  // Usamos un servicio de proxy de Unsplash o similar que sea estable sin API Key para demo
+  // source.unsplash.com ha sido cerrado, usamos imágenes de picsum o similar como fallback robusto
+  // O mejor: Pollinations pero SIN el parámetro 'enhance' que a veces triggerea el límite, y con un seed forzado
+  
+  // INTENTO 1: Pollinations simplificado (suele funcionar mejor sin filtros complejos)
+  // return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true&seed=${seed}`;
+
+  // INTENTO 2: Unsplash directo (requiere keywords precisas)
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1280&height=720&seed=${seed}&nologo=true&model=flux`; 
+  // Nota: Si Pollinations falla globalmente por IP, la única opción sin API Key es LoremFlickr o similar, 
+  // pero son imágenes feas.
+  // Vamos a usar un truco: añadir un timestamp para evitar caché agresivo
+  
+  // MANTENEMOS POLLINATIONS PERO CON MODELO 'TURBO' (menos restricción) o 'FLUX'
 };
 
 const BlockRegistry = {

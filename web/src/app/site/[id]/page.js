@@ -63,6 +63,16 @@ export default async function SitePage({ params }) {
       {siteData?.blocks?.map((block, index) => (
         <BlockRenderer key={index} block={block} index={index} />
       ))}
+
+      {/* Botón Flotante para Volver al Dashboard (Solo visible para el creador idealmente, por ahora para todos) */}
+      <a 
+        href="/dashboard"
+        className="fixed bottom-6 right-6 z-50 px-6 py-3 bg-black/80 backdrop-blur-xl border border-white/10 text-white rounded-full font-medium shadow-2xl hover:scale-105 transition-transform flex items-center gap-2 group"
+      >
+        <span>←</span>
+        <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap">Volver al Dashboard</span>
+        <span className="group-hover:hidden">Syncelle</span>
+      </a>
     </main>
   );
 }
