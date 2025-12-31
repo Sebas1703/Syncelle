@@ -14,6 +14,7 @@ export const getImageUrl = (data) => {
   // Si no es URL, usar como prompt para Unsplash
   const prompt = data.image_prompt || (typeof img === 'string' ? img : null) || "professional luxury design";
   const keywords = encodeURIComponent(prompt.split(',')[0].trim());
-  return `https://source.unsplash.com/featured/1600x900?${keywords}`;
+  return `https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80&sig=${keywords}`;
+  // Nota: Para una integración profesional real, se debe usar el API oficial de Unsplash para buscar y obtener IDs específicos.
 };
 

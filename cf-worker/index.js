@@ -47,12 +47,27 @@ JSON SCHEMA (ESTRICTO):
 export default {
   async fetch(request, env) {
     const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": "https://syncelle.netlify.app", // Cambiar por el dominio real en producción
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Syncelle-Service-Key",
     };
 
+    // Soporte para desarrollo local
+    const origin = request.headers.get("Origin");
+    if (origin && (origin.includes("localhost") || origin.includes("127.0.0.1"))) {
+      corsHeaders["Access-Control-Allow-Origin"] = origin;
+    }
+
     if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+    // Protección básica por Service Key (Prevenir que cualquiera use el endpoint)
+    const serviceKey = request.headers.get("X-Syncelle-Service-Key");
+    if (!serviceKey || serviceKey !== env.SERVICE_KEY) {
+      return new Response(JSON.stringify({ error: "Unauthorized: Missing or invalid Service Key" }), { 
+        status: 401, 
+        headers: corsHeaders 
+      });
+    }
 
     try {
       const body = await request.json().catch(() => ({}));

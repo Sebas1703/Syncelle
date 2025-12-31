@@ -57,7 +57,10 @@ export default function SiteView({ projectData, projectId }) {
     try {
       const response = await fetch("https://cf-worker-proxy.tiansebasp17-03.workers.dev/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "X-Syncelle-Service-Key": process.env.NEXT_PUBLIC_SYNCELLE_SERVICE_KEY || "syncelle-dev-key-123"
+        },
         body: JSON.stringify({
           isEdit: true,
           currentData: currentData,
@@ -104,11 +107,11 @@ export default function SiteView({ projectData, projectId }) {
         ...dynamicStyles
       }}
     >
-      <style dangerouslySetInnerHTML={{__html: `
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=${headingFont.replace(/ /g, '+')}:wght@400;700;900&family=${bodyFont.replace(/ /g, '+')}:wght@300;400;600&display=swap');
         h1, h2, h3, h4, h5, h6 { font-family: '${headingFont}', sans-serif !important; }
         body, p, button, span, div { font-family: '${bodyFont}', sans-serif; }
-      `}} />
+      `}</style>
 
       {/* NAVBAR GENERADO CON SOPORTE MÓVIL */}
       {navbar && (

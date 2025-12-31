@@ -92,6 +92,10 @@ export default function Dashboard() {
         throw new Error("La IA no devolvió un diseño válido.");
       }
 
+      if (content.error) {
+        throw new Error(content.error);
+      }
+
       setStatus('Guardando proyecto...');
 
       // 2. Obtener sesión robusta

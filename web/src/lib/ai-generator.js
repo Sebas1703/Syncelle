@@ -17,7 +17,10 @@ export async function generateSiteContent(prompt, onProgress, model = "fast") {
   try {
     const response = await fetch(API_BASE, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "X-Syncelle-Service-Key": process.env.NEXT_PUBLIC_SYNCELLE_SERVICE_KEY || "syncelle-dev-key-123"
+      },
       body: JSON.stringify(payload)
     });
 
