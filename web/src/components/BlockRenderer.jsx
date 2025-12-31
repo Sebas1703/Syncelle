@@ -10,6 +10,8 @@ import ProductGrid from './blocks/ProductGrid';
 import TextContent from './blocks/TextContent';
 import ContactForm from './blocks/ContactForm';
 import ImageBlock from './blocks/ImageBlock';
+import EditorialHero from './blocks/EditorialHero';
+import EditorialGrid from './blocks/EditorialGrid';
 import { motion } from 'framer-motion';
 import { getImageUrl } from '@/utils/design-utils';
 
@@ -133,13 +135,16 @@ const BlockRegistry = {
   'text-content': TextContent,
   'contact-form': ContactForm,
   'image-block': ImageBlock,
+  'editorial-hero': EditorialHero,
+  'editorial-grid': EditorialGrid,
   
   // ALIASES (Para robustez ante alucinaciones de la IA)
   'featured-products': ProductGrid,
   'text': TextContent,
   'image': ImageBlock,
   'form': ContactForm,
-  'contact': ContactForm
+  'contact': ContactForm,
+  'editorial': EditorialHero
 };
 
 export default function BlockRenderer({ block, index, onAction }) {
