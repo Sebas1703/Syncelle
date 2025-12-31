@@ -12,23 +12,44 @@ export default function Dashboard() {
   const [model, setModel] = useState('fast'); // 'fast' o 'elite'
   const [status, setStatus] = useState('');
   const [projects, setProjects] = useState([]);
+  const [credits, setCredits] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
-    fetchProjects();
+    fetchUserData();
   }, []);
 
-  const fetchProjects = async () => {
+  const fetchUserData = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session?.user) return;
 
-    const { data, error } = await supabase
+    // Fetch projects
+    const { data: projs } = await supabase
       .from('projects')
       .select('*')
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
 
-    if (data) setProjects(data);
+    if (projs) setProjects(projs);
+
+    // Fetch credits (from a 'profiles' table we'll assume exists or handle missing)
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('credits')
+      .eq('id', session.user.id)
+      .single();
+
+    if (profile) {
+      setCredits(profile.credits);
+    } else if (profileError && profileError.code === 'PGRST116') {
+      // Profile doesn't exist, create it with 3 starter credits
+      const { data: newProfile } = await supabase
+        .from('profiles')
+        .insert({ id: session.user.id, credits: 3 })
+        .select()
+        .single();
+      if (newProfile) setCredits(newProfile.credits);
+    }
   };
 
   const handleDelete = async (id, e) => {
@@ -51,6 +72,12 @@ export default function Dashboard() {
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
     
+    // Validar créditos para modelo Elite
+    if (model === 'elite' && credits <= 0) {
+      alert("No tienes créditos Elite suficientes. Usa el modelo Rápido o recarga créditos.");
+      return;
+    }
+
     setIsGenerating(true);
     setStatus('Conectando con la IA...');
 
@@ -67,23 +94,30 @@ export default function Dashboard() {
       
       let user = session?.user;
 
-      // Si no hay sesión válida en memoria, intentar refrescar o getUser
       if (!user) {
         const { data: { user: refreshedUser }, error: refreshError } = await supabase.auth.getUser();
         if (refreshError || !refreshedUser) {
-           // Guardar backup local por si acaso
-           localStorage.setItem('syncelle_pending_project', JSON.stringify({ prompt, content }));
            throw new Error("Tu sesión expiró. Por favor, recarga la página e inicia sesión.");
         }
         user = refreshedUser;
       }
 
-      // 3. Guardar en Supabase
+      // 3. Descontar crédito si es Elite
+      if (model === 'elite') {
+        const { error: creditError } = await supabase
+          .from('profiles')
+          .update({ credits: credits - 1 })
+          .eq('id', user.id);
+        
+        if (!creditError) setCredits(prev => prev - 1);
+      }
+
+      // 4. Guardar en Supabase
       const { data: project, error } = await supabase
         .from('projects')
         .insert({
           user_id: user.id,
-          name: content.meta?.title || 'Nuevo Proyecto',
+          name: content.meta?.projectName || content.meta?.title || 'Nuevo Proyecto',
           prompt: prompt,
           structured_data: content
         })
@@ -92,7 +126,7 @@ export default function Dashboard() {
 
       if (error) throw error;
 
-      // 4. Redirigir
+      // 5. Redirigir
       setStatus('Redirigiendo...');
       router.push(`/site/${project.id}`);
 
@@ -109,7 +143,16 @@ export default function Dashboard() {
       
       <div className="pt-32 pb-12 px-8">
         <header className="flex justify-between items-center mb-12 max-w-5xl mx-auto">
-          <h1 className="text-2xl font-bold">Panel de Control</h1>
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-bold">Panel de Control</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Créditos Elite:</span>
+              <span className={`text-xs font-black px-2 py-0.5 rounded ${credits > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                {credits} 💎
+              </span>
+              <Link href="/billing" className="text-[10px] text-zinc-500 hover:text-white underline ml-2">Cargar más</Link>
+            </div>
+          </div>
           <button 
             onClick={async () => {
               await supabase.auth.signOut();
