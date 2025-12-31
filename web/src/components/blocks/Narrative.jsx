@@ -1,10 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const fallbackImage = "https://images.unsplash.com/photo-1527254059249-05af64a0bc3f?auto=format&fit=crop&w=1200&q=80";
+const getImageUrl = (data) => {
+  if (data.image_url) return data.image_url;
+  if (!data.image_prompt) return "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80";
+  
+  const keywords = encodeURIComponent(data.image_prompt.split(',')[0].trim());
+  return `https://source.unsplash.com/featured/1600x900?${keywords}`;
+};
 
 const Narrative = ({ data, variant = 'image-right', style }) => {
-  const imageUrl = data.image_url || fallbackImage;
+  const imageUrl = getImageUrl(data);
   const isImageLeft = variant === 'image-left';
 
   return (
@@ -51,7 +57,6 @@ const Narrative = ({ data, variant = 'image-right', style }) => {
             alt="Narrative Visual" 
             className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
           />
-          {/* Sombra interna para integrar */}
           <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl" />
         </motion.div>
 
