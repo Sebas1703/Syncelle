@@ -6,6 +6,7 @@ import Marquee from './blocks/Marquee';
 import Narrative from './blocks/Narrative';
 import Showcase from './blocks/Showcase';
 import CTAFooter from './blocks/CTAFooter';
+import ProductGrid from './blocks/ProductGrid';
 import { motion } from 'framer-motion';
 
 // Utilidad para asegurar imágenes de alta calidad (Fallback a Unsplash)
@@ -126,9 +127,10 @@ const BlockRegistry = {
   'narrative': Narrative,
   'showcase': Showcase,
   'cta-footer': CTAFooter,
+  'product-grid': ProductGrid,
 };
 
-export default function BlockRenderer({ block, index }) {
+export default function BlockRenderer({ block, index, onAction }) {
   const Component = BlockRegistry[block.type];
   
   if (!Component) {
@@ -139,5 +141,12 @@ export default function BlockRenderer({ block, index }) {
     );
   }
 
-  return <Component data={block.data} variant={block.variant} style={block.style} />;
+  return (
+    <Component 
+      data={block.data} 
+      variant={block.variant} 
+      style={block.style} 
+      onAction={onAction}
+    />
+  );
 }
