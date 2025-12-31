@@ -13,7 +13,7 @@ export default async function SitePage({ params }) {
   // Esto ocurre en Vercel antes de enviar HTML al usuario
   const { data, error } = await supabase
     .from('projects')
-    .select('structured_data')
+    .select('structured_data,prompt')
     .eq('id', id)
     .single();
 
@@ -23,6 +23,7 @@ export default async function SitePage({ params }) {
   }
 
   const siteData = data.structured_data;
+  const originalPrompt = data.prompt || '';
   const theme = siteData.theme || {};
   const palette = theme.palette || {};
 
@@ -61,11 +62,21 @@ export default async function SitePage({ params }) {
         }
       `}} />
 
-      {siteData?.blocks?.map((block, index) => (
-        <BlockRenderer key={index} block={block} index={index} />
-      ))}
+      {Array.isArray(siteData?.pages) && siteData.pages.length > 0 ? (
+        siteData.pages.map((page, pageIdx) => (
+          <div key={pageIdx} id={page.name || `page-${pageIdx}`} className="scroll-mt-20">
+            {page?.blocks?.map((block, index) => (
+              <BlockRenderer key={`${pageIdx}-${index}`} block={block} index={index} />
+            ))}
+          </div>
+        ))
+      ) : (
+        siteData?.blocks?.map((block, index) => (
+          <BlockRenderer key={index} block={block} index={index} />
+        ))
+      )}
 
-      <SiteActions siteData={siteData} />
+      <SiteActions siteData={siteData} originalPrompt={originalPrompt} />
     </main>
   );
 }
