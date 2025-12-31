@@ -1,16 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-// Utilidad simple para imágenes (duplicada para independencia del componente)
-const getImageUrl = (prompt) => {
-  if (!prompt) return null;
-  const seed = Math.floor(Math.random() * 1000);
-  // Versión robusta para evitar Rate Limits
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=800&nologo=true&seed=${seed}&model=flux`;
-};
+const fallbackImage = "https://images.unsplash.com/photo-1527254059249-05af64a0bc3f?auto=format&fit=crop&w=1200&q=80";
 
 const Narrative = ({ data, variant = 'image-right', style }) => {
-  const imageUrl = data.image_url || getImageUrl(data.image_prompt || "minimalist editorial photography, architectural detail, 4k");
+  const imageUrl = data.image_url || fallbackImage;
   const isImageLeft = variant === 'image-left';
 
   return (

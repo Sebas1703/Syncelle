@@ -8,40 +8,42 @@ import Showcase from './blocks/Showcase';
 import CTAFooter from './blocks/CTAFooter';
 import { motion } from 'framer-motion';
 
-// Utilidad para generar imágenes de alta calidad (Switch a Unsplash por estabilidad)
-const getImageUrl = (prompt) => {
-  if (!prompt) return null;
-  // Extraemos keywords simples del prompt para Unsplash (ej: "minimalist coffee shop" -> "coffee,shop,minimalist")
-  // Limpiamos palabras irrelevantes para búsqueda de stock
-  const keywords = prompt
-    .replace(/cinematic|8k|hyperrealistic|unreal engine|editorial|photography|style/gi, "")
-    .split(/,|\s+/)
-    .filter(w => w.length > 3)
-    .slice(0, 3) // Tomamos las 3 palabras más significativas
-    .join(",");
-    
-  const seed = Math.floor(Math.random() * 1000);
-  // Usamos un servicio de proxy de Unsplash o similar que sea estable sin API Key para demo
-  // source.unsplash.com ha sido cerrado, usamos imágenes de picsum o similar como fallback robusto
-  // O mejor: Pollinations pero SIN el parámetro 'enhance' que a veces triggerea el límite, y con un seed forzado
-  
-  // INTENTO 1: Pollinations simplificado (suele funcionar mejor sin filtros complejos)
-  // return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?nologo=true&seed=${seed}`;
+const fallbackImage = "https://images.unsplash.com/photo-1527254059249-05af64a0bc3f?auto=format&fit=crop&w=1600&q=80";
 
-  // INTENTO 2: Unsplash directo (requiere keywords precisas)
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1280&height=720&seed=${seed}&nologo=true&model=flux`; 
-  // Nota: Si Pollinations falla globalmente por IP, la única opción sin API Key es LoremFlickr o similar, 
-  // pero son imágenes feas.
-  // Vamos a usar un truco: añadir un timestamp para evitar caché agresivo
-  
-  // MANTENEMOS POLLINATIONS PERO CON MODELO 'TURBO' (menos restricción) o 'FLUX'
+const NavbarBlock = ({ data, variant }) => {
+  const style = variant || "topbar";
+  const base = "w-full max-w-6xl mx-auto flex items-center justify-between px-6 py-3";
+  const glass = "backdrop-blur-xl bg-black/60 border border-white/10 rounded-full";
+  const topbar = "border-b border-white/10";
+  const floating = "rounded-full shadow-xl bg-black/70 border border-white/10 px-6";
+  const cls = style === "glass" ? glass : style === "floating" ? floating : topbar;
+  const links = data?.links || [];
+  return (
+    <nav className={`sticky top-0 z-40 text-white ${style === "topbar" ? "bg-black/60 backdrop-blur" : "bg-transparent"}`}>
+      <div className={`${base} ${cls}`}>
+        <div className="flex items-center gap-3">
+          <span className="w-9 h-9 rounded-lg bg-emerald-500 flex items-center justify-center font-bold text-black">S</span>
+          <span className="font-bold text-lg">{data?.brand || "Syncelle"}</span>
+        </div>
+        <div className="hidden md:flex items-center gap-6 text-sm">
+          {links.map((l, i) => (
+            <a key={i} href={l.href} className="hover:text-emerald-400 transition-colors">{l.label}</a>
+          ))}
+          {data?.cta && (
+            <a href="/dashboard" className="px-4 py-2 rounded-full bg-white text-black font-semibold hover:scale-105 transition">
+              {data.cta}
+            </a>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
 };
 
 const BlockRegistry = {
+  'navbar': NavbarBlock,
   'hero': ({ data, variant }) => {
-    // Fallback inteligente para el prompt de imagen
-    const imagePrompt = data.image_prompt || "abstract cinematic 3d shapes, dark atmosphere, 8k, unreal engine 5";
-    const bgImage = getImageUrl(imagePrompt);
+    const bgImage = data?.image_url || fallbackImage;
     
     // VARIANT: SPLIT (Texto Izq / Imagen Der)
     if (variant === 'split') {
