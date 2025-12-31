@@ -7,6 +7,9 @@ import Narrative from './blocks/Narrative';
 import Showcase from './blocks/Showcase';
 import CTAFooter from './blocks/CTAFooter';
 import ProductGrid from './blocks/ProductGrid';
+import TextContent from './blocks/TextContent';
+import ContactForm from './blocks/ContactForm';
+import ImageBlock from './blocks/ImageBlock';
 import { motion } from 'framer-motion';
 
 // Utilidad para asegurar imágenes de alta calidad (Fallback a Unsplash)
@@ -129,9 +132,19 @@ const BlockRegistry = {
   'showcase': Showcase,
   'cta-footer': CTAFooter,
   'product-grid': ProductGrid,
+  'text-content': TextContent,
+  'contact-form': ContactForm,
+  'image-block': ImageBlock,
+  
+  // ALIASES (Para robustez ante alucinaciones de la IA)
+  'featured-products': ProductGrid,
+  'text': TextContent,
+  'image': ImageBlock,
+  'form': ContactForm,
+  'contact': ContactForm
 };
 
-export default function BlockRenderer({ block, index }) {
+export default function BlockRenderer({ block, index, onAction }) {
   const Component = BlockRegistry[block.type];
   
   if (!Component) {
@@ -142,5 +155,5 @@ export default function BlockRenderer({ block, index }) {
     );
   }
 
-  return <Component data={block.data} variant={block.variant} style={block.style} />;
+  return <Component data={block.data} variant={block.variant} style={block.style} onAction={onAction} />;
 }
