@@ -97,10 +97,10 @@ class AIService {
               
               if (contentFragment) {
                 accumulatedText += contentFragment;
-                if (liveContainer) {
+        if (liveContainer) {
                    liveContainer.textContent = `Diseñando... ${accumulatedText.length} bytes`;
-                }
-              }
+        }
+      }
             } catch (e) {
               // Si falla aquí, es probable que sea un JSON raro de OpenAI, pero ya no por corte de string
               console.warn('Error parseando evento SSE:', e);

@@ -11,7 +11,7 @@ const ProductCard = ({ product, onAction }) => {
       viewport={{ once: true }}
       className="group"
     >
-      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[var(--surface)] mb-4">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[var(--surface)] mb-4 border border-white/5">
         <img 
           src={product.image_url || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"} 
           alt={product.name}
@@ -26,7 +26,12 @@ const ProductCard = ({ product, onAction }) => {
       </div>
       <h3 className="text-lg font-bold mb-1" style={{ color: 'var(--text-main)' }}>{product.name}</h3>
       <p className="text-sm opacity-60 mb-2" style={{ color: 'var(--text-main)' }}>{product.desc}</p>
-      <span className="text-xl font-black" style={{ color: 'var(--primary)' }}>{product.price}</span>
+      <div className="flex justify-between items-center">
+        <span className="text-xl font-black" style={{ color: 'var(--primary)' }}>{product.price}</span>
+        {product.isNew && (
+            <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 bg-[var(--primary)] text-black rounded-md">Nuevo</span>
+        )}
+      </div>
     </motion.div>
   );
 };
@@ -40,11 +45,10 @@ const ProductGrid = ({ data, onAction }) => {
             {data?.title || "Colección Exclusiva"}
           </h2>
           <p className="text-xl opacity-60 font-light" style={{ color: 'var(--text-main)' }}>
-            Diseños seleccionados para quienes buscan lo extraordinario.
+            {data?.subtitle || "Diseños seleccionados para quienes buscan lo extraordinario."}
           </p>
         </div>
         <div className="flex gap-4">
-           {/* Filtros decorativos profesionales */}
            <span className="px-4 py-2 rounded-full border border-white/10 text-xs font-bold uppercase tracking-widest opacity-40">Todo</span>
            <span className="px-4 py-2 rounded-full border border-white/10 text-xs font-bold uppercase tracking-widest opacity-40">Novedades</span>
         </div>

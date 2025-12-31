@@ -11,8 +11,6 @@ export default function SiteView({ projectData, projectId }) {
   const [feedback, setFeedback] = useState('');
   const [isEditing, setIsGenerating] = useState(false);
   const [currentData, setCurrentData] = useState(projectData);
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const siteData = currentData;
   const theme = siteData.theme || {};
@@ -21,16 +19,9 @@ export default function SiteView({ projectData, projectId }) {
   
   // Soporte para estructura antigua vs nueva
   const pages = siteData.pages || { home: { blocks: siteData.blocks || [] } };
-          const currentBlocks = pages[currentPage]?.blocks || [];
+  const currentBlocks = pages[currentPage]?.blocks || [];
 
-          const handleAction = (action) => {
-            if (action.type === 'ADD_TO_CART') {
-              setCart(prev => [...prev, action.payload]);
-              setIsCartOpen(true);
-            }
-          };
-
-          const dynamicStyles = {
+  const dynamicStyles = {
     '--bg-page': palette.background || '#09090b',
     '--text-main': theme.mode === 'light' ? '#000000' : '#ffffff',
     '--primary': palette.primary || '#10b981',
@@ -137,95 +128,20 @@ export default function SiteView({ projectData, projectId }) {
 
       {/* RENDERER DE BLOQUES */}
       <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentPage}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {currentBlocks.map((block, index) => (
-                    <BlockRenderer 
-                      key={`${currentPage}-${index}`} 
-                      block={block} 
-                      index={index} 
-                      onAction={handleAction}
-                    />
-                  ))}
-                </motion.div>
-              </AnimatePresence>
+        <motion.div
+          key={currentPage}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
+        >
+          {currentBlocks.map((block, index) => (
+            <BlockRenderer key={`${currentPage}-${index}`} block={block} index={index} />
+          ))}
+        </motion.div>
+      </AnimatePresence>
 
-              {/* DRAWER DEL CARRITO */}
-              <AnimatePresence>
-                {isCartOpen && (
-                  <>
-                    <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      onClick={() => setIsCartOpen(false)}
-                      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
-                    />
-                    <motion.div 
-                      initial={{ x: '100%' }}
-                      animate={{ x: 0 }}
-                      exit={{ x: '100%' }}
-                      className="fixed top-0 right-0 h-full w-full max-w-md glass-panel-strong z-[70] p-8 shadow-2xl flex flex-col"
-                    >
-                      <div className="flex justify-between items-center mb-10">
-                        <h2 className="text-3xl font-bold tracking-tighter">Tu Carrito</h2>
-                        <button onClick={() => setIsCartOpen(false)} className="text-2xl">✕</button>
-                      </div>
-
-                      <div className="flex-1 overflow-y-auto space-y-6">
-                        {cart.length === 0 ? (
-                          <div className="text-center py-20 opacity-40">
-                            <p className="text-5xl mb-4">🛒</p>
-                            <p>Tu carrito está vacío</p>
-                          </div>
-                        ) : (
-                          cart.map((item, i) => (
-                            <div key={i} className="flex gap-4 items-center animate-in slide-in-from-right duration-300">
-                              <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5">
-                                <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="font-bold">{item.name}</h4>
-                                <p className="text-sm opacity-50">{item.price}</p>
-                              </div>
-                              <button 
-                                onClick={() => setCart(prev => prev.filter((_, idx) => idx !== i))}
-                                className="opacity-30 hover:opacity-100 transition-opacity"
-                              >
-                                Eliminar
-                              </button>
-                            </div>
-                          ))
-                        )}
-                      </div>
-
-                      {cart.length > 0 && (
-                        <div className="pt-8 border-t border-white/10 mt-auto">
-                          <div className="flex justify-between items-center mb-6">
-                            <span className="text-xl opacity-60">Total Estimado</span>
-                            <span className="text-2xl font-black" style={{ color: 'var(--primary)' }}>
-                              ${cart.reduce((acc, item) => acc + parseFloat(item.price.replace('$', '') || 0), 0).toFixed(2)}
-                            </span>
-                          </div>
-                          <button 
-                            className="w-full py-4 rounded-2xl font-bold text-black hover:scale-[1.02] transition-transform active:scale-95"
-                            style={{ backgroundColor: 'var(--primary)' }}
-                          >
-                            Finalizar Compra
-                          </button>
-                        </div>
-                      )}
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-
-              {/* FOOTER */}
+      {/* FOOTER */}
       {siteData.footer && (
         <footer className="py-12 px-6 border-t border-white/5 opacity-50 text-center text-sm">
           {siteData.footer.text}
@@ -260,20 +176,9 @@ export default function SiteView({ projectData, projectId }) {
           )}
         </AnimatePresence>
 
-                <div className="flex gap-3">
-                  {cart.length > 0 && (
-                    <button 
-                      onClick={() => setIsCartOpen(true)}
-                      className="p-4 bg-white text-black rounded-full shadow-2xl hover:scale-110 transition-transform font-bold flex items-center gap-2 relative"
-                    >
-                      🛒
-                      <span className="absolute -top-1 -right-1 bg-[var(--primary)] text-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-black">
-                        {cart.length}
-                      </span>
-                    </button>
-                  )}
-                  <button 
-                    onClick={downloadProject}
+        <div className="flex gap-3">
+          <button 
+            onClick={downloadProject}
             className="p-4 bg-zinc-900 border border-white/10 text-white rounded-full shadow-2xl hover:scale-110 transition-transform"
             title="Descargar Proyecto"
           >
