@@ -166,15 +166,47 @@ const BlockRegistry = {
   'cta-footer': CTAFooter,
 };
 
+// Bloque genérico para tipos no mapeados (e.g. featured-flavors, artisanal-process, etc.)
+const UnknownBlock = ({ block }) => {
+  const title = block.data?.title || block.type || "Sección";
+  const description = block.data?.description || block.data?.subheadline || "";
+  const items = block.data?.items || block.data?.list || [];
+  const image = block.data?.image_url || fallbackImage;
+  const hasItems = Array.isArray(items) && items.length > 0;
+
+  return (
+    <section className="py-16 px-4 md:px-8 max-w-6xl mx-auto">
+      <div className="bg-white/3 border border-white/5 rounded-2xl p-8 backdrop-blur">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h2 className="text-3xl font-bold mb-3">{title}</h2>
+            {description && <p className="text-lg opacity-80 mb-4">{description}</p>}
+            {hasItems && (
+              <ul className="space-y-2 text-sm opacity-80">
+                {items.map((it, idx) => (
+                  <li key={idx} className="flex gap-2 items-start">
+                    <span className="text-emerald-400 mt-1">•</span>
+                    <span>{typeof it === "string" ? it : (it.title || it.name || JSON.stringify(it))}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div className="relative w-full h-72 rounded-2xl overflow-hidden shadow-lg">
+            <img src={image} alt={title} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 export default function BlockRenderer({ block, index }) {
   const Component = BlockRegistry[block.type];
   
   if (!Component) {
-    return (
-      <div className="p-10 border border-red-500/20 bg-red-500/5 m-4 rounded-lg text-red-400 font-mono text-sm">
-        [Bloque: {block.type}]
-      </div>
-    );
+    return <UnknownBlock block={block} />;
   }
 
   // Pasamos variant y style explícitamente
