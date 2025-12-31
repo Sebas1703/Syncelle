@@ -88,6 +88,10 @@ export default function Dashboard() {
         setStatus(`Diseñando... ${bytes} bytes generados`);
       }, model);
 
+      if (!content || typeof content !== 'object') {
+        throw new Error("La IA no devolvió un diseño válido.");
+      }
+
       setStatus('Guardando proyecto...');
 
       // 2. Obtener sesión robusta
