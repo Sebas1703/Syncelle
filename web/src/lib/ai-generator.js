@@ -21,7 +21,8 @@ export async function generateSiteContent(prompt, onProgress) {
     });
 
     if (!response.ok) {
-      throw new Error(`API Error ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API Error ${response.status}`);
     }
 
     const contentType = response.headers.get("content-type") || "";
