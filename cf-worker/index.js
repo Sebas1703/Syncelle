@@ -54,7 +54,10 @@ export default {
 
       // 2. Parsear Body
       const body = await request.json().catch(() => ({}));
-      const { prompt, isEdit, currentData, feedback } = body;
+      const { prompt, isEdit, currentData, feedback, model } = body;
+
+      // Seleccionar modelo (por defecto mini para ahorrar)
+      const selectedModel = model === "elite" ? "gpt-4o" : "gpt-4o-mini";
 
       if (!prompt && !isEdit) {
         return new Response(JSON.stringify({ error: "No se proporcionó un prompt válido." }), {
@@ -82,7 +85,7 @@ export default {
           "Authorization": `Bearer ${env.OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: "gpt-4o",
+          model: selectedModel,
           messages: messages,
           response_format: { type: "json_object" },
           temperature: 0.7

@@ -9,6 +9,7 @@ import Navbar from '@/components/Navbar';
 export default function Dashboard() {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [model, setModel] = useState('fast'); // 'fast' o 'elite'
   const [status, setStatus] = useState('');
   const [projects, setProjects] = useState([]);
   const router = useRouter();
@@ -57,7 +58,7 @@ export default function Dashboard() {
       // 1. Generar contenido
       const content = await generateSiteContent(prompt, (bytes) => {
         setStatus(`Diseñando... ${bytes} bytes generados`);
-      });
+      }, model);
 
       setStatus('Guardando proyecto...');
 
@@ -137,6 +138,22 @@ export default function Dashboard() {
               placeholder="Ej: Un portafolio para un fotógrafo de bodas, estilo minimalista, elegante, con tonos crema y dorados..."
               className="w-full h-40 bg-black/50 border border-zinc-700 rounded-xl p-4 text-base focus:outline-none focus:border-emerald-500 transition-colors resize-none mb-6"
             />
+
+            {/* Selector de Inteligencia */}
+            <div className="flex bg-black/50 p-1 rounded-2xl mb-6 border border-zinc-800">
+              <button 
+                onClick={() => setModel('fast')}
+                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${model === 'fast' ? 'bg-zinc-800 text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
+              >
+                ⚡ Rápido (Mini)
+              </button>
+              <button 
+                onClick={() => setModel('elite')}
+                className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${model === 'elite' ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'text-zinc-500 hover:text-zinc-300'}`}
+              >
+                💎 Elite (GPT-4o)
+              </button>
+            </div>
 
             <button
               onClick={handleGenerate}

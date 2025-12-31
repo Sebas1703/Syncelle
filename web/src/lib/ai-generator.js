@@ -1,13 +1,14 @@
 // Versión adaptada para Next.js del AI Service
 const API_BASE = "https://cf-worker-proxy.tiansebasp17-03.workers.dev/generate";
 
-export async function generateSiteContent(prompt, onProgress) {
+export async function generateSiteContent(prompt, onProgress, model = "fast") {
   const payload = {
     prompt: `[INTENT: ECOMMERCE ELITE] ${prompt.trim()}`,
     brand: "Syncelle Elite v5",
     version: 5,
+    model: model,
     config: {
-      model: "gpt-4o",
+      model: model === "elite" ? "gpt-4o" : "gpt-4o-mini",
       format: "multi-page-json",
       blocks: ["hero", "product-grid", "bento-grid", "narrative", "showcase", "cta-footer"]
     }
