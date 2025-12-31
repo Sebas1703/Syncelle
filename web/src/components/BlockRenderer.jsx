@@ -11,20 +11,13 @@ import TextContent from './blocks/TextContent';
 import ContactForm from './blocks/ContactForm';
 import ImageBlock from './blocks/ImageBlock';
 import { motion } from 'framer-motion';
-
-// Utilidad para asegurar imágenes de alta calidad (Fallback a Unsplash)
-const getImageUrl = (data) => {
-  if (!data) return "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80";
-  if (data.image_url) return data.image_url;
-  if (!data.image_prompt) return "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80";
-  
-  const keywords = encodeURIComponent(data.image_prompt.split(',')[0].trim());
-  return `https://source.unsplash.com/featured/1600x900?${keywords}`;
-};
+import { getImageUrl } from '@/utils/design-utils';
 
 const BlockRegistry = {
   'hero': ({ data, variant, onAction }) => {
     const bgImage = getImageUrl(data);
+    const headline = data?.headline || data?.title || "Diseño sin límites.";
+    const subheadline = data?.subheadline || data?.subtitle || "Creamos experiencias digitales que marcan la diferencia.";
     
     if (variant === 'split') {
       return (
@@ -38,15 +31,19 @@ const BlockRegistry = {
                 className="text-left"
               >
                   <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tighter leading-tight" style={{ color: 'var(--text-main)' }}>
-                    {data?.headline}
+                    {headline}
                   </h1>
                   <p className="text-xl md:text-2xl opacity-70 mb-8 font-light leading-relaxed" style={{ color: 'var(--text-main)' }}>
-                    {data?.subheadline}
+                    {subheadline}
                   </p>
                   <div className="flex gap-4">
-                     {data?.cta_primary && (
-                        <button className="px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--primary)', color: 'black' }}>
-                           {data.cta_primary}
+                     {(data?.cta_primary || data?.actionLabel || data?.cta) && (
+                        <button 
+                          onClick={() => onAction?.({ type: 'NAVIGATE', payload: data?.actionTarget || 'contact' })}
+                          className="px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform" 
+                          style={{ backgroundColor: 'var(--primary)', color: 'black' }}
+                        >
+                           {data.cta_primary || data.actionLabel || data.cta}
                         </button>
                      )}
                   </div>
@@ -70,7 +67,7 @@ const BlockRegistry = {
     }
 
     return (
-      <section className="min-h-screen w-full flex flex-col justify-center items-center relative overflow-hidden px-4 md:px-8 pt-20">
+      <section className="min-h-screen w-full flex flex-col justify-center items-center relative overflow-hidden px-4 md:px-8 pt-20 text-center">
         <motion.div 
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -85,23 +82,23 @@ const BlockRegistry = {
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-page)] via-[var(--bg-page)]/50 to-transparent" />
         </motion.div>
         
-        <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
+        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
           <motion.h1 
             initial={{ opacity: 0, y: 50, filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tighter leading-[1.1] text-white drop-shadow-2xl"
           >
-            {data?.headline || "Diseño sin límites."}
+            {headline}
           </motion.h1>
 
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-lg md:text-2xl text-white/80 max-w-2xl font-light mb-10 leading-relaxed shadow-black drop-shadow-md"
+            className="text-lg md:text-2xl text-white/80 max-w-2xl font-light mb-10 leading-relaxed drop-shadow-md"
           >
-            {data?.subheadline || "Creamos experiencias digitales que marcan la diferencia."}
+            {subheadline}
           </motion.p>
           
           <motion.div 
@@ -110,15 +107,16 @@ const BlockRegistry = {
             transition={{ delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4"
           >
-            {data?.cta_primary && (
+            {(data?.cta_primary || data?.actionLabel || data?.cta) && (
               <button 
+                  onClick={() => onAction?.({ type: 'NAVIGATE', payload: data?.actionTarget || 'products' })}
                   className="px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105 shadow-[0_0_30px_-5px_var(--primary)] hover:shadow-[0_0_40px_-5px_var(--primary)] active:scale-95"
                   style={{
                     backgroundColor: 'var(--primary)',
                     color: '#000' 
                   }}
               >
-                  {data.cta_primary}
+                  {data.cta_primary || data.actionLabel || data.cta}
               </button>
             )}
           </motion.div>
@@ -155,5 +153,15 @@ export default function BlockRenderer({ block, index, onAction }) {
     );
   }
 
-  return <Component data={block.data} variant={block.variant} style={block.style} onAction={onAction} />;
+  // UNIFICACIÓN DE DATOS: Soporta 'data' o 'content' indistintamente
+  const blockData = block.data || block.content || {};
+
+  return (
+    <Component 
+      data={blockData} 
+      variant={block.variant} 
+      style={block.style} 
+      onAction={onAction} 
+    />
+  );
 }

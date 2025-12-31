@@ -1,40 +1,47 @@
+'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
+import { getImageUrl } from '@/utils/design-utils';
 
 const Showcase = ({ data }) => {
-  const items = data?.items || [];
+  const images = data?.items || data?.images || [];
 
   return (
-    <section className="py-24 px-4 bg-zinc-900/50">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group relative aspect-[4/5] overflow-hidden rounded-xl bg-zinc-800"
-            >
-              <img
-                src={item.image_url}
-                alt={item.title}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-6 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform">
-                <h3 className="text-2xl font-bold text-white">{item.title}</h3>
-                <p className="text-emerald-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity delay-100">
-                  {item.subtitle}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+    <section className="py-24 px-6 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <div className="max-w-2xl">
+          <h2 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4" style={{ color: 'var(--text-main)' }}>
+            {data?.title || "Galería Visual"}
+          </h2>
+          <p className="text-xl opacity-60 font-light" style={{ color: 'var(--text-main)' }}>
+            {data?.subtitle || "Una mirada profunda a nuestro universo creativo."}
+          </p>
         </div>
+      </div>
+
+      <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+        {images.map((img, idx) => (
+          <motion.div 
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: idx * 0.1 }}
+            className="relative group overflow-hidden rounded-[2rem] break-inside-avoid shadow-xl"
+          >
+            <img 
+              src={getImageUrl(typeof img === 'string' ? { image_prompt: img } : img)} 
+              alt={`Showcase ${idx}`}
+              className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+               <span className="px-6 py-2 rounded-full border border-white/20 backdrop-blur-md text-white text-sm font-bold">Ver Detalles</span>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
 };
 
 export default Showcase;
-

@@ -8,18 +8,34 @@ import { supabase } from '@/lib/supabase';
 export default function SiteView({ projectData, projectId }) {
   const [currentPage, setCurrentPage] = useState('home');
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [isEditing, setIsGenerating] = useState(false);
   const [currentData, setCurrentData] = useState(projectData);
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const siteData = currentData;
   const theme = siteData.theme || {};
   const palette = theme.palette || {};
   const navbar = siteData.navbar || null;
   
-  // Soporte para estructura antigua vs nueva
   const pages = siteData.pages || { home: { blocks: siteData.blocks || [] } };
   const currentBlocks = pages[currentPage]?.blocks || [];
+
+  const handleAction = (action) => {
+    if (action.type === 'ADD_TO_CART') {
+      setCart(prev => [...prev, action.payload]);
+      setIsCartOpen(true);
+    }
+    if (action.type === 'NAVIGATE') {
+      const target = action.payload;
+      if (pages[target]) {
+        setCurrentPage(target);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  };
 
   const dynamicStyles = {
     '--bg-page': palette.background || '#09090b',
@@ -54,7 +70,6 @@ export default function SiteView({ projectData, projectId }) {
       const newData = await response.json();
       setCurrentData(newData);
       
-      // Guardar en Supabase el cambio
       await supabase
         .from('projects')
         .update({ structured_data: newData })
@@ -95,34 +110,80 @@ export default function SiteView({ projectData, projectId }) {
         body, p, button, span, div { font-family: '${bodyFont}', sans-serif; }
       `}} />
 
-      {/* NAVBAR GENERADO */}
+      {/* NAVBAR GENERADO CON SOPORTE MÓVIL */}
       {navbar && (
-        <nav className="fixed top-0 left-0 right-0 z-40 p-6 flex justify-center pointer-events-none">
-          <div className="glass-panel-strong px-8 py-3 rounded-full flex items-center gap-12 pointer-events-auto shadow-2xl">
-            <span className="font-black text-xl tracking-tighter" style={{ color: 'var(--primary)' }}>
+        <nav className="fixed top-0 left-0 right-0 z-40 p-4 md:p-6 flex justify-center pointer-events-none">
+          <div className="glass-panel-strong px-6 md:px-8 py-3 rounded-full flex items-center justify-between w-full max-w-5xl pointer-events-auto shadow-2xl">
+            <span className="font-black text-lg md:text-xl tracking-tighter truncate max-w-[150px] md:max-w-none" style={{ color: 'var(--primary)' }}>
               {navbar.logo}
             </span>
+            
+            {/* DESKTOP LINKS */}
             <div className="hidden md:flex gap-8">
               {navbar.links?.map((link, i) => (
                 <button 
                   key={i} 
-                  onClick={() => setCurrentPage(link.target)}
+                  onClick={() => { setCurrentPage(link.target); window.scrollTo(0,0); }}
                   className={`text-sm font-bold uppercase tracking-widest hover:opacity-100 transition-opacity ${currentPage === link.target ? 'opacity-100' : 'opacity-50'}`}
                 >
                   {link.label}
                 </button>
               ))}
             </div>
+
+            {/* MOBILE TOGGLE */}
+            <button 
+              className="md:hidden p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <div className="w-6 h-0.5 bg-white mb-1.5" />
+              <div className="w-6 h-0.5 bg-white mb-1.5" />
+              <div className="w-6 h-0.5 bg-white" />
+            </button>
+
             {navbar.cta && (
               <button 
-                onClick={() => setCurrentPage(navbar.cta.target)}
-                className="px-6 py-2 rounded-full font-bold text-xs uppercase"
+                onClick={() => { setCurrentPage(navbar.cta.target); window.scrollTo(0,0); }}
+                className="hidden md:block px-6 py-2 rounded-full font-bold text-xs uppercase"
                 style={{ backgroundColor: 'var(--primary)', color: 'black' }}
               >
                 {navbar.cta.text}
               </button>
             )}
           </div>
+
+          {/* MOBILE MENU DRAWER */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="fixed top-20 left-4 right-4 glass-panel-strong rounded-[2rem] p-6 shadow-2xl z-50 md:hidden pointer-events-auto"
+              >
+                <div className="flex flex-col gap-4">
+                  {navbar.links?.map((link, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => { setCurrentPage(link.target); setIsMobileMenuOpen(false); window.scrollTo(0,0); }}
+                      className={`text-lg font-bold uppercase tracking-widest text-left py-2 ${currentPage === link.target ? 'text-[var(--primary)]' : 'opacity-60'}`}
+                    >
+                      {link.label}
+                    </button>
+                  ))}
+                  {navbar.cta && (
+                    <button 
+                      onClick={() => { setCurrentPage(navbar.cta.target); setIsMobileMenuOpen(false); window.scrollTo(0,0); }}
+                      className="w-full py-4 rounded-2xl font-bold text-sm uppercase mt-4"
+                      style={{ backgroundColor: 'var(--primary)', color: 'black' }}
+                    >
+                      {navbar.cta.text}
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </nav>
       )}
 
@@ -134,11 +195,87 @@ export default function SiteView({ projectData, projectId }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5 }}
+          className="pt-20 md:pt-0"
         >
           {currentBlocks.map((block, index) => (
-            <BlockRenderer key={`${currentPage}-${index}`} block={block} index={index} />
+            <BlockRenderer 
+              key={`${currentPage}-${index}`} 
+              block={block} 
+              index={index} 
+              onAction={handleAction}
+            />
           ))}
         </motion.div>
+      </AnimatePresence>
+
+      {/* DRAWER DEL CARRITO */}
+      <AnimatePresence>
+        {isCartOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsCartOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              className="fixed top-0 right-0 h-full w-full max-w-md glass-panel-strong z-[70] p-8 shadow-2xl flex flex-col"
+            >
+              <div className="flex justify-between items-center mb-10">
+                <h2 className="text-3xl font-bold tracking-tighter">Tu Carrito</h2>
+                <button onClick={() => setIsCartOpen(false)} className="text-2xl">✕</button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto space-y-6">
+                {cart.length === 0 ? (
+                  <div className="text-center py-20 opacity-40">
+                    <p className="text-5xl mb-4">🛒</p>
+                    <p>Tu carrito está vacío</p>
+                  </div>
+                ) : (
+                  cart.map((item, i) => (
+                    <div key={i} className="flex gap-4 items-center animate-in slide-in-from-right duration-300">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-white/5">
+                        <img src={getImageUrl(item)} alt={item.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold">{item.name}</h4>
+                        <p className="text-sm opacity-50">{item.price}</p>
+                      </div>
+                      <button 
+                        onClick={() => setCart(prev => prev.filter((_, idx) => idx !== i))}
+                        className="opacity-30 hover:opacity-100 transition-opacity"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {cart.length > 0 && (
+                <div className="pt-8 border-t border-white/10 mt-auto">
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="text-xl opacity-60">Total Estimado</span>
+                    <span className="text-2xl font-black" style={{ color: 'var(--primary)' }}>
+                      ${cart.reduce((acc, item) => acc + parseFloat(item.price?.toString().replace('$', '') || 0), 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <button 
+                    className="w-full py-4 rounded-2xl font-bold text-black hover:scale-[1.02] transition-transform active:scale-95"
+                    style={{ backgroundColor: 'var(--primary)' }}
+                  >
+                    Finalizar Compra
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </>
+        )}
       </AnimatePresence>
 
       {/* FOOTER */}
@@ -177,6 +314,17 @@ export default function SiteView({ projectData, projectId }) {
         </AnimatePresence>
 
         <div className="flex gap-3">
+          {cart.length > 0 && (
+            <button 
+              onClick={() => setIsCartOpen(true)}
+              className="p-4 bg-white text-black rounded-full shadow-2xl hover:scale-110 transition-transform font-bold flex items-center gap-2 relative"
+            >
+              🛒
+              <span className="absolute -top-1 -right-1 bg-[var(--primary)] text-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-black">
+                {cart.length}
+              </span>
+            </button>
+          )}
           <button 
             onClick={downloadProject}
             className="p-4 bg-zinc-900 border border-white/10 text-white rounded-full shadow-2xl hover:scale-110 transition-transform"
@@ -202,4 +350,3 @@ export default function SiteView({ projectData, projectId }) {
     </div>
   );
 }
-

@@ -1,17 +1,14 @@
+'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
-
-const getImageUrl = (data) => {
-  if (data.image_url) return data.image_url;
-  if (!data.image_prompt) return "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80";
-  
-  const keywords = encodeURIComponent(data.image_prompt.split(',')[0].trim());
-  return `https://source.unsplash.com/featured/1600x900?${keywords}`;
-};
+import { getImageUrl } from '@/utils/design-utils';
 
 const Narrative = ({ data, variant = 'image-right', style }) => {
   const imageUrl = getImageUrl(data);
   const isImageLeft = variant === 'image-left';
+
+  // Soporte para múltiples formas de enviar el texto
+  const paragraphs = data?.paragraphs || (data?.text ? [data.text] : ["Nuestra historia comienza con una visión de excelencia y diseño sin precedentes."]);
 
   return (
     <section 
@@ -29,10 +26,10 @@ const Narrative = ({ data, variant = 'image-right', style }) => {
           className="flex-1"
         >
           <h2 className="text-sm font-mono mb-6 tracking-widest uppercase" style={{ color: 'var(--primary)' }}>
-            {data?.title || "Nuestra Filosofía"}
+            {data?.title || data?.headline || "Nuestra Filosofía"}
           </h2>
           <div className="space-y-6">
-            {data?.paragraphs?.map((p, i) => (
+            {paragraphs.map((p, i) => (
               <p 
                 key={i} 
                 className="text-xl md:text-3xl leading-relaxed font-light"

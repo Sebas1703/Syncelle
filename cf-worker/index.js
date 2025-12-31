@@ -1,40 +1,43 @@
 /**
- * SYNCELLE WORKER V6 - ELITE DESIGN ARCHITECT
+ * SYNCELLE WORKER V7 - THE DESIGN SUPREMACY
  * Modelo: GPT-4o
  */
 
 const SYSTEM_PROMPT_ARCHITECT = `
 Actúa como un Equipo Elite de Producto: Arquitecto de Software, Director de Arte y Experto en Conversión.
-Tu objetivo es diseñar un sitio web o E-commerce de nivel mundial que compita con marcas como Stripe, Linear, Vercel o Apple.
+Tu objetivo es diseñar un sitio web o E-commerce de nivel mundial.
 
-REGLAS MAESTRAS DE DISEÑO:
-1. IDENTIDAD: Define una "Vibra" coherente. Si es 'Futuristic Urban', usa negro profundo (#000000), acentos neón y tipografía grotesca. Usa espaciado masivo.
-2. E-COMMERCE OBLIGATORIO: Si el usuario menciona "tienda", "productos" o "vender", inyecta SIEMPRE el bloque 'product-grid' con al menos 4 productos premium en la página 'products'.
-3. MULTI-PÁGINA: Genera siempre un objeto 'pages' con 'home', 'products', 'about' y 'contact'.
-4. IMÁGENES ELITE: Genera keywords de Unsplash ultra-descriptivas (ej: "futuristic urban techwear cinematic lighting neon rain Tokyo").
-5. BLOQUES PERMITIDOS (ESTRICTO): Usa exclusivamente estos nombres:
-   - 'hero' (con variants: 'centered', 'split')
-   - 'product-grid' (para listas de productos)
-   - 'bento-grid' (para features)
-   - 'marquee' (para marcas o logos)
-   - 'narrative' (texto + imagen asimétrica)
-   - 'showcase' (galería visual)
-   - 'text-content' (párrafos largos o artículos)
-   - 'contact-form' (formulario)
-   - 'image-block' (imagen full width)
-   - 'cta-footer' (cierre con acción)
+REGLAS DE ORO (PROHIBICIÓN DE "content"):
+1. NO USES NUNCA LA PROPIEDAD "content" para los datos de un bloque. USA SIEMPRE "data".
+2. NO USES "paragraphs". Si quieres enviar texto largo, usa "text" como string o array de strings dentro de "data".
+3. NO INVENTES BLOQUES. Usa exclusivamente los de la lista oficial.
+
+REGLAS DE DISEÑO:
+1. IDENTIDAD: Define una "Vibra" extrema. Usa espaciado masivo (py-32, gap-16).
+2. E-COMMERCE REAL: Genera productos con nombres realistas, precios en USD y descripciones de catálogo de lujo.
+3. IMÁGENES: Sé ultra-específico con Unsplash. Ejemplo: "minimalist architecture interior sunset high resolution".
+
+BLOQUES PERMITIDOS (ESTRICTO):
+- 'hero': { "headline": "...", "subheadline": "...", "image_prompt": "...", "cta_primary": "...", "actionTarget": "products|contact" }
+- 'product-grid': { "title": "...", "subtitle": "...", "products": [{ "name": "...", "price": "$XX.XX", "image_prompt": "...", "description": "..." }] }
+- 'bento-grid': { "items": [{ "title": "...", "description": "...", "icon": "✦" }] }
+- 'narrative': { "title": "...", "paragraphs": ["..."], "image_prompt": "..." }
+- 'showcase': { "title": "...", "subtitle": "...", "images": ["image_prompt_1", "image_prompt_2"] }
+- 'text-content': { "title": "...", "text": "..." }
+- 'contact-form': { "title": "...", "subtitle": "...", "buttonText": "..." }
+- 'cta-footer': { "text": "...", "button_text": "...", "actionTarget": "products|contact" }
 
 ESTRUCTURA JSON:
 {
-  "_thinking": "Análisis estratégico de la marca y decisiones de diseño.",
-  "meta": { "projectName": "...", "isEcommerce": true|false, "styleVibe": "..." },
+  "_thinking": "Análisis de marca.",
+  "meta": { "projectName": "...", "isEcommerce": true, "styleVibe": "..." },
   "theme": {
-    "palette": { "background": "#Hex", "surface": "#Hex", "primary": "#Hex", "textMain": "#Hex", "accent": "#Hex" },
-    "typography": { "headingFont": "Google Font Name", "bodyFont": "Google Font Name" }
+    "palette": { "background": "#000000", "surface": "#111111", "primary": "#00FFAA", "textMain": "#FFFFFF", "accent": "#FF00FF" },
+    "typography": { "headingFont": "Inter", "bodyFont": "Inter" }
   },
-  "navbar": { "logo": "...", "links": [{ "label": "Inicio", "target": "home" }, { "label": "Tienda", "target": "products" }, { "label": "Nosotros", "target": "about" }, { "label": "Contacto", "target": "contact" }] },
+  "navbar": { "logo": "...", "links": [{ "label": "...", "target": "home|products|about|contact" }] },
   "pages": {
-    "home": { "blocks": [...] },
+    "home": { "blocks": [{ "type": "hero", "variant": "split", "data": {...} }, ...] },
     "products": { "blocks": [...] },
     "about": { "blocks": [...] },
     "contact": { "blocks": [...] }
@@ -54,10 +57,6 @@ export default {
     if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
     try {
-      if (!env.OPENAI_API_KEY) {
-        return new Response(JSON.stringify({ error: "Falta API KEY." }), { status: 500, headers: corsHeaders });
-      }
-
       const body = await request.json().catch(() => ({}));
       const { prompt, isEdit, currentData, feedback, model } = body;
 
@@ -84,16 +83,11 @@ export default {
           model: selectedModel,
           messages: messages,
           response_format: { type: "json_object" },
-          temperature: 0.8
+          temperature: 0.7
         })
       });
 
       const data = await openAiResponse.json();
-
-      if (!openAiResponse.ok || data.error) {
-        return new Response(JSON.stringify({ error: data.error?.message || "OpenAI Error" }), { status: openAiResponse.status, headers: corsHeaders });
-      }
-
       return new Response(data.choices[0].message.content, {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
