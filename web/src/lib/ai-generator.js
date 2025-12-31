@@ -3,10 +3,14 @@ const API_BASE = "https://cf-worker-proxy.tiansebasp17-03.workers.dev/generate";
 
 export async function generateSiteContent(prompt, onProgress) {
   const payload = {
-    prompt: prompt.trim(),
-    brand: "Syncelle Client",
-    sections: [],
-    version: 2
+    prompt: `[INTENT: ECOMMERCE ELITE] ${prompt.trim()}`,
+    brand: "Syncelle Elite v5",
+    version: 5,
+    config: {
+      model: "gpt-4o",
+      format: "multi-page-json",
+      blocks: ["hero", "product-grid", "bento-grid", "narrative", "showcase", "cta-footer"]
+    }
   };
 
   try {

@@ -91,10 +91,10 @@ export default function Navbar() {
                   Login
                 </Link>
                 <Link 
-                  href="/dashboard"
+                  href="/signup"
                   className="px-5 py-2 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition-all shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)] hover:shadow-[0_0_25px_-5px_rgba(16,185,129,0.6)] hover:scale-105"
                 >
-                  Crea con IA
+                  Registrarse
                 </Link>
               </>
             )}

@@ -30,6 +30,23 @@ export default function Dashboard() {
     if (data) setProjects(data);
   };
 
+  const handleDelete = async (id, e) => {
+    e.stopPropagation(); // Evitar que redirija al hacer clic en eliminar
+    if (!confirm('¿Estás seguro de que quieres eliminar este proyecto?')) return;
+
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      setProjects(projects.filter(p => p.id !== id));
+    } catch (err) {
+      alert('Error al eliminar: ' + err.message);
+    }
+  };
+
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
     
@@ -156,9 +173,18 @@ export default function Dashboard() {
                       <h4 className="font-bold text-lg group-hover:text-emerald-400 transition-colors">
                         {proj.name || 'Sin Título'}
                       </h4>
-                      <span className="text-xs text-zinc-500 font-mono">
-                        {new Date(proj.created_at).toLocaleDateString()}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-zinc-500 font-mono">
+                          {new Date(proj.created_at).toLocaleDateString()}
+                        </span>
+                        <button 
+                          onClick={(e) => handleDelete(proj.id, e)}
+                          className="p-2 opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-500 rounded-lg transition-all"
+                          title="Eliminar proyecto"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </div>
                     <p className="text-zinc-400 text-sm line-clamp-2 text-ellipsis">
                       {proj.prompt}
