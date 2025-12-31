@@ -6,10 +6,12 @@ import Marquee from './blocks/Marquee';
 import Narrative from './blocks/Narrative';
 import Showcase from './blocks/Showcase';
 import CTAFooter from './blocks/CTAFooter';
+import ProductGrid from './blocks/ProductGrid';
 import { motion } from 'framer-motion';
 
 // Utilidad para asegurar imágenes de alta calidad (Fallback a Unsplash)
 const getImageUrl = (data) => {
+  if (!data) return "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80";
   if (data.image_url) return data.image_url;
   if (!data.image_prompt) return "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80";
   
@@ -18,7 +20,7 @@ const getImageUrl = (data) => {
 };
 
 const BlockRegistry = {
-  'hero': ({ data, variant }) => {
+  'hero': ({ data, variant, onAction }) => {
     const bgImage = getImageUrl(data);
     
     if (variant === 'split') {
@@ -126,6 +128,7 @@ const BlockRegistry = {
   'narrative': Narrative,
   'showcase': Showcase,
   'cta-footer': CTAFooter,
+  'product-grid': ProductGrid,
 };
 
 export default function BlockRenderer({ block, index }) {
