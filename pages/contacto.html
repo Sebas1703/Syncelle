@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Hreflang tags -->
+    <link rel="alternate" hreflang="es" href="https://syncelle.com/pages/contacto.html" />
+    <link rel="alternate" hreflang="en" href="https://syncelle.com/en/pages/contacto.html" />
   </head>
   <body>
     <header class="header">
@@ -30,6 +33,11 @@
             <li><a href="/AI/prompt.html" class="nav__link">Crea con IA</a></li>
             <li><a href="servicios.html" class="nav__link">Servicios</a></li>
             <li><a href="contacto.html" class="nav__link nav__link--active">Contáctanos</a></li>
+            <li class="lang-switch" style="margin-left: 1rem; display: flex; gap: 0.5rem; align-items: center;">
+              <a href="#" class="nav__link nav__link--active" style="padding: 5px;">ES</a>
+              <span style="color: white;">|</span>
+              <a href="/en/pages/contacto.html" class="nav__link" style="padding: 5px;">EN</a>
+            </li>
           </ul>
         </nav>
       </div>
@@ -76,8 +84,10 @@
       </style>
     </main>
     <footer>
-      <p>&copy; 2024 Syncelle. Todos los derechos reservados.</p>
+      <p>&copy; 2025 Syncelle. Todos los derechos reservados.</p>
     </footer>
+    <script>window.currentLanguage = 'es';</script>
+    <script src="../translations.js"></script>
     <script src="../script.js"></script>
   </body>
-</html> 
+</html>

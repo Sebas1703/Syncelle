@@ -24,7 +24,7 @@ class AppController {
     }
 
     this.isProcessing = true;
-    this._updateLoadingState(loadingElement, 'Generando contenido con IA...');
+    this._updateLoadingState(loadingElement, getTranslation('generatingContent'));
 
     try {
       // Step 1: Generate content with AI
@@ -32,7 +32,7 @@ class AppController {
       
       // CHECK FOR V2 (DESIGN ENGINE)
       if (content.meta && (content.meta.version === "2.0" || content.meta.version === 2)) {
-        this._updateLoadingState(loadingElement, 'Guardando proyecto en la nube...');
+        this._updateLoadingState(loadingElement, getTranslation('savingProject'));
         
         // 1. Guardar en Supabase (Persistencia Real)
         let savedProject;
@@ -49,7 +49,7 @@ class AppController {
         }
 
         const projectId = savedProject.id;
-        this._updateLoadingState(loadingElement, 'Iniciando Motor de Diseño V2...');
+        this._updateLoadingState(loadingElement, getTranslation('startingEngine'));
 
         // 2. Redirigir a la URL dinámica de Next.js
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -65,14 +65,14 @@ class AppController {
       }
 
       // Step 2: Select appropriate template (LEGACY V1)
-      this._updateLoadingState(loadingElement, 'Seleccionando plantilla...');
+      this._updateLoadingState(loadingElement, getTranslation('selectingTemplate'));
       const template = this.templateManager.selectTemplate(content, businessIdea);
       
       // Step 3: Store data for rendering
       await this.templateManager.storeContentAndTemplate(content, template);
       
       // Step 4: Navigate to render page
-      this._updateLoadingState(loadingElement, 'Preparando vista...');
+      this._updateLoadingState(loadingElement, getTranslation('preparingView'));
       this._navigateToRender();
 
     } catch (error) {
@@ -109,7 +109,7 @@ class AppController {
 
       // Validate data
       if (!hasValidData) {
-        throw new Error("No encontré datos válidos. ¿Vienes desde la página de generación?");
+        throw new Error(getTranslation('noData'));
       }
 
       // Initialize renderer and render content
@@ -166,7 +166,13 @@ class AppController {
    * @private
    */
   _navigateToRender() {
-    window.location.href = '/AI/render.html';
+    const lang = window.currentLanguage || 'es';
+    if (lang === 'en') {
+      window.location.href = '/en/ai/render.html';
+    } else {
+      // Use lowercase 'ai' to match directory structure
+      window.location.href = '/ai/render.html';
+    }
   }
 
   /**
@@ -196,4 +202,4 @@ class AppController {
 }
 
 // Export for use in other modules
-window.AppController = AppController; 
+window.AppController = AppController;

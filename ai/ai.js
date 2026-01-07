@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       if (generateBtn) {
         generateBtn.disabled = true;
-        generateBtn.textContent = 'Generando con IA...';
+        generateBtn.textContent = (typeof getTranslation === 'function') ? getTranslation('generating') : 'Generando con IA...';
       }
     },
     
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       if (generateBtn) {
         generateBtn.disabled = false;
-        generateBtn.textContent = 'Generar Página';
+        generateBtn.textContent = (typeof getTranslation === 'function') ? getTranslation('generate') : 'Generar Página';
       }
     },
     
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const businessIdea = input.value.trim();
     if (!businessIdea) {
-      alert("Por favor, escribe tu idea de página web.");
+      alert((typeof getTranslation === 'function') ? getTranslation('enterIdea') : "Por favor, escribe tu idea de página web.");
       return;
     }
 
@@ -86,7 +86,8 @@ document.addEventListener('DOMContentLoaded', function() {
       
     } catch (error) {
       console.error('Generation error:', error);
-      alert(`Ocurrió un error al generar la página: ${error.message}`);
+      const msg = (typeof getTranslation === 'function') ? getTranslation('error') + error.message : `Ocurrió un error al generar la página: ${error.message}`;
+      alert(msg);
       
       // Error - stop animation immediately
       aiAnimationController.stop();

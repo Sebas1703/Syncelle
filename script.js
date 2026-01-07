@@ -120,7 +120,7 @@ function initBasicFunctionality() {
         e.preventDefault();
         mensajeDiv.textContent = '';
         setTimeout(() => {
-          mensajeDiv.textContent = '¡Gracias por tu mensaje! Te contactaremos pronto.';
+          mensajeDiv.textContent = getTranslation('msgSent');
           mensajeDiv.style.color = '#00F4AE';
           form.reset();
         }, 700);

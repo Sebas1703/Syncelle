@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Render FINAL | Plantilla + IA</title>
+  <title>Final Render | Template + AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <!-- Hreflang tags -->
   <link rel="alternate" hreflang="es" href="https://syncelle.com/ai/render.html" />
   <link rel="alternate" hreflang="en" href="https://syncelle.com/en/ai/render.html" />
 
-  <!-- Agregar fuentes del proyecto -->
+  <!-- Add project fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
-    /* Paleta de colores del proyecto Syncelle */
+    /* Syncelle Project Color Palette */
     :root {
       --fondo: #0B0B0B;
       --texto: #FFFFFF;
@@ -23,7 +23,7 @@
       --verde-secundario: #00DA8E;
       --fuente: 'Inter', 'Poppins', Arial, sans-serif;
       
-      /* Variables originales mantenidas para compatibilidad */
+      /* Original variables maintained for compatibility */
       --bg: #0f0f0f;
       --fg: #f5f5f5;
       --muted: #9ca3af;
@@ -42,7 +42,7 @@
       flex-direction: column;
     }
     
-    /* Header con estilos del proyecto */
+    /* Header with project styles */
     header {
       max-width: 1200px;
       margin: 0 auto;
@@ -140,7 +140,7 @@
       font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     }
     
-    /* Footer con estilos del proyecto */
+    /* Footer with project styles */
     footer {
       max-width: 1200px;
       margin: 0 auto;
@@ -179,13 +179,13 @@
 <body>
   <header style="display: flex; justify-content: space-between; align-items: center;">
     <div>
-      <h1>🎨 Render Final · Syncelle AI</h1>
+      <h1>🎨 Final Render · Syncelle AI</h1>
       <div id="meta"></div>
     </div>
     <div class="lang-switch" style="display: flex; gap: 0.5rem; align-items: center; font-size: 0.9rem;">
-      <a href="/ai/render.html" style="color: var(--verde-acento); text-decoration: none; font-weight: bold;">ES</a>
+      <a href="/ai/render.html" style="color: var(--muted); text-decoration: none;">ES</a>
       <span style="color: var(--muted);">|</span>
-      <a href="/en/ai/render.html" style="color: var(--muted); text-decoration: none;">EN</a>
+      <a href="/en/ai/render.html" style="color: var(--verde-acento); text-decoration: none; font-weight: bold;">EN</a>
     </div>
   </header>
 
@@ -194,24 +194,24 @@
     <iframe id="preview" title="preview"></iframe>
 
     <details>
-      <summary>📋 Ver JSON recibido</summary>
+      <summary>📋 View received JSON</summary>
       <pre id="json-dump"></pre>
     </details>
   </main>
 
   <footer>
-    <small>&copy; 2025 Syncelle. Todos los derechos reservados. | Renderizado con IA</small>
+    <small>&copy; 2025 Syncelle. All rights reserved. | Rendered with AI</small>
   </footer>
 
-  <script>window.currentLanguage = 'es';</script>
-  <script src="../translations.js"></script>
+  <script>window.currentLanguage = 'en';</script>
+  <script src="../../translations.js"></script>
 
   <!-- Load AI modules -->
-  <script src="../src/utils/project-store.js"></script>
-  <script src="../src/ai/ai-service.js"></script>
-  <script src="../src/ai/template-manager.js"></script>
-  <script src="../src/ai/content-renderer.js"></script>
-  <script src="../src/ai/app-controller.js"></script>
+  <script src="../../src/utils/project-store.js"></script>
+  <script src="../../src/ai/ai-service.js"></script>
+  <script src="../../src/ai/template-manager.js"></script>
+  <script src="../../src/ai/content-renderer.js"></script>
+  <script src="../../src/ai/app-controller.js"></script>
 
   <script>
     /**
@@ -236,7 +236,7 @@
       appController.renderStoredContent(iframe, errBox, meta, dump)
         .catch(error => {
           console.error('Render failed:', error);
-          const msg = (typeof getTranslation === 'function') ? getTranslation('renderError') + error.message : `Error al renderizar: ${error.message}`;
+          const msg = (typeof getTranslation === 'function') ? getTranslation('renderError') + error.message : `Error rendering: ${error.message}`;
           errBox.textContent = msg;
           errBox.style.display = 'block';
         });
