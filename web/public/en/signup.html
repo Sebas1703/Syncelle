@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Syncelle</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    
+    <header class="header">
+      <div class="header__container">
+        <div class="header__row">
+          <div class="logo-wrapper">
+            <a href="/en/">
+              <img src="../logo2.png" alt="Syncelle Logo" class="logo">
+            </a>
+          </div>
+          <nav class="nav">
+            <ul class="nav__menu">
+              <li><a href="/en/" class="nav__link">Home</a></li>
+              <li><a href="login.html" class="nav__link cta-secondary-sm">Log In</a></li>
+              <li class="lang-switch" style="margin-left: 1rem; display: flex; gap: 0.5rem; align-items: center;">
+                <a href="/signup.html" class="nav__link" style="padding: 5px;">ES</a>
+                <span style="color: white;">|</span>
+                <a href="#" class="nav__link nav__link--active" style="padding: 5px;">EN</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="auth-container">
+      <div class="auth-card">
+        <h1>Join Syncelle</h1>
+        <p class="auth-subtitle">Create your first website today</p>
+        
+        <form id="signup-form" class="auth-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" required placeholder="your@email.com">
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Minimum 6 characters" minlength="6">
+          </div>
+
+          <div id="auth-error" class="auth-error" style="display: none;"></div>
+          <div id="auth-success" class="auth-success" style="display: none;"></div>
+
+          <button type="submit" class="cta-main full-width">Create Account</button>
+        </form>
+
+        <p class="auth-footer">
+          Already have an account? <a href="login.html">Log In</a>
+        </p>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Syncelle. All rights reserved.</p>
+    </footer>
+
+    <style>
+      .auth-container { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--bg); }
+      .auth-card { background: #111; border: 1px solid #2a2a2a; border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 420px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+      .auth-card h1 { font-size: 1.8rem; margin-bottom: 0.5rem; text-align: center; color: #fff; }
+      .auth-subtitle { text-align: center; color: #9ca3af; margin-bottom: 2rem; }
+      .form-group { margin-bottom: 1.5rem; }
+      .form-group label { display: block; margin-bottom: 0.5rem; color: #ccc; font-size: 0.9rem; }
+      .form-group input { width: 100%; padding: 0.8rem 1rem; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; color: #fff; font-family: inherit; transition: border-color 0.3s; }
+      .form-group input:focus { outline: none; border-color: #00F4AE; }
+      .full-width { width: 100%; justify-content: center; margin-top: 1rem; }
+      .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: #888; }
+      .auth-footer a { color: #00F4AE; text-decoration: none; }
+      
+      .auth-error { background: rgba(255, 107, 107, 0.1); color: #ff6b6b; padding: 0.8rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1rem; text-align: center; border: 1px solid rgba(255, 107, 107, 0.2); }
+      
+      .auth-success { background: rgba(0, 244, 174, 0.1); color: #00F4AE; padding: 0.8rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1rem; text-align: center; border: 1px solid rgba(0, 244, 174, 0.2); }
+    </style>
+
+    <script>window.currentLanguage = 'en';</script>
+    <script src="../translations.js"></script>
+
+    <!-- Logic -->
+    <script src="../src/lib/supabase-client.js"></script>
+    <script src="../src/auth/auth-service.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const authService = new AuthService();
+        const form = document.getElementById('signup-form');
+        const errorDiv = document.getElementById('auth-error');
+        const successDiv = document.getElementById('auth-success');
+        const btn = form.querySelector('button');
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          errorDiv.style.display = 'none';
+          successDiv.style.display = 'none';
+          btn.textContent = getTranslation('creatingAccount');
+          btn.disabled = true;
+
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          try {
+            await authService.signUp(email, password);
+            successDiv.textContent = getTranslation('accountCreated');
+            successDiv.style.display = 'block';
+            
+            setTimeout(() => {
+              window.location.href = '/en/dashboard.html';
+            }, 1500);
+          } catch (error) {
+            errorDiv.textContent = error.message || getTranslation('signupError');
+            errorDiv.style.display = 'block';
+            btn.textContent = getTranslation('createAccountBtn');
+            btn.disabled = false;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

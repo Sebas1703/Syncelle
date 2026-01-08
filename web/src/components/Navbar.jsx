@@ -78,6 +78,12 @@ export default function Navbar() {
 
           {/* RIGHT ACTIONS */}
           <div className="hidden md:flex items-center gap-4">
+            <div className="flex gap-2 text-sm items-center border-r border-zinc-700 pr-4 mr-2">
+              <span className="text-white font-bold cursor-default">ES</span>
+              <span className="text-zinc-600">|</span>
+              <a href="/en/index.html" className="text-zinc-400 hover:text-emerald-400 transition-colors">EN</a>
+            </div>
+
             {user ? (
               <Link 
                 href="/dashboard"
@@ -153,6 +159,11 @@ export default function Navbar() {
                     <span className="opacity-0 group-hover:opacity-100 text-emerald-500">→</span>
                   </Link>
                 ))}
+                <div className="h-px bg-zinc-800 my-2" />
+                <div className="flex justify-center gap-4 py-2">
+                    <span className="text-white font-bold bg-zinc-800 px-3 py-1 rounded-lg">ES</span>
+                    <a href="/en/index.html" className="text-zinc-400 hover:text-white px-3 py-1 rounded-lg border border-zinc-800">EN</a>
+                </div>
                 <div className="h-px bg-zinc-800 my-2" />
                 {user ? (
                    <Link 
