@@ -31,7 +31,7 @@ export async function POST(request) {
           { role: 'user', content: prompt.user },
         ],
         temperature: 0.3,
-        max_tokens: 4000,
+        max_tokens: doc_type === 'dpa' ? 8000 : 4000,
       }),
     });
 
@@ -42,9 +42,15 @@ export async function POST(request) {
 
     const data = await response.json();
     let content = data.choices?.[0]?.message?.content;
+    const finishReason = data.choices?.[0]?.finish_reason;
 
     if (!content) {
       return Response.json({ error: 'No content generated' }, { status: 500 });
+    }
+
+    // If output was truncated, append a warning
+    if (finishReason === 'length') {
+      content += '\n\n---\n\n**Note:** This document was truncated due to length limits. Please regenerate or contact support.';
     }
 
     // Strip code fences if the AI wraps output in ```markdown ... ```

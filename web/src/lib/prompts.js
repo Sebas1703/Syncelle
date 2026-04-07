@@ -2,6 +2,18 @@
 // These instruct the AI to generate legally-structured compliance documents
 
 export function buildPrompt(docType, data) {
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+  // Collect all selected services into a flat list for sub-processor accuracy
+  const allServices = [
+    ...(data.hosting || []),
+    ...(data.database || []),
+    ...(data.auth_provider || []),
+    ...(data.payments || []),
+    ...(data.analytics || []),
+    ...(data.email_service || []),
+  ].filter(s => s && s !== 'None' && s !== 'Custom/self-built');
+
   const companyInfo = `
 Company Name: ${data.company_name || 'N/A'}
 Website: ${data.company_website || 'N/A'}
@@ -24,6 +36,8 @@ Payments: ${(data.payments || []).join(', ') || 'N/A'}
 Analytics: ${(data.analytics || []).join(', ') || 'N/A'}
 Email Service: ${(data.email_service || []).join(', ') || 'N/A'}
 Other Services: ${data.other_services || 'N/A'}
+Today's Date: ${today}
+EXACT list of third-party services selected (use ONLY these as sub-processors): ${allServices.length > 0 ? allServices.join(', ') : 'None selected'}
 `.trim();
 
   const prompts = {
@@ -34,13 +48,13 @@ Other Services: ${data.other_services || 'N/A'}
 - Cover: data controller info, data collected, purposes, legal bases for each purpose, specific retention periods for each data category, third-party sharing with named services, international transfers with safeguards, user rights (access, rectification, erasure, portability, restriction, objection, withdraw consent, lodge complaint with supervisory authority), cookie policy detailing each cookie type, children's data if applicable, automated decision-making disclosure, contact information for DPO or privacy contact
 - Use proper legal headings and numbered sections
 - Be specific to the company's actual data practices — reference their actual services and data by name
-- Use today's date as the effective date
+- The effective date MUST be exactly: ${today}
 
 CRITICAL FORMATTING RULES:
 - Output raw Markdown only — do NOT wrap in code fences or backticks
 - Start directly with the # heading
 - No \`\`\`markdown wrapper`,
-      user: `Generate a Privacy Policy for this SaaS company:\n\n${companyInfo}`
+      user: `Generate a Privacy Policy for this SaaS company. The effective date is ${today}.\n\n${companyInfo}`
     },
 
     terms_of_service: {
@@ -51,12 +65,12 @@ CRITICAL FORMATTING RULES:
 - Use proper legal headings and numbered sections
 - Be specific to the company's actual product — reference their product name and description
 - Use the company's country for governing law and jurisdiction
-- Use today's date as the effective date
+- The effective date MUST be exactly: ${today}
 
 CRITICAL FORMATTING RULES:
 - Output raw Markdown only — do NOT wrap in code fences or backticks
 - Start directly with the # heading`,
-      user: `Generate Terms of Service for this SaaS company:\n\n${companyInfo}`
+      user: `Generate Terms of Service for this SaaS company. The effective date is ${today}.\n\n${companyInfo}`
     },
 
     dpa: {
@@ -81,8 +95,10 @@ CRITICAL FORMATTING RULES:
 CRITICAL FORMATTING RULES:
 - Output raw Markdown only — do NOT wrap in code fences or backticks
 - Start directly with the # heading
-- Do NOT leave any placeholder brackets like [Insert X] — fill everything with the company's actual data`,
-      user: `Generate a Data Processing Agreement for this SaaS company acting as data processor:\n\n${companyInfo}`
+- Do NOT leave any placeholder brackets like [Insert X] — fill everything with the company's actual data
+- For the Controller party (the SaaS company's client), use descriptive fillable fields like "[Client Company Name]", "[Client Address]", "[Client Contact Email]" — make it clear these are for the client to fill in
+- The agreement date MUST be: ${today}`,
+      user: `Generate a Data Processing Agreement for this SaaS company acting as data processor. The agreement date is ${today}.\n\n${companyInfo}`
     },
 
     sub_processors: {
@@ -101,7 +117,7 @@ Also include:
 - A header section explaining what sub-processors are
 - How changes to the list are communicated (email notification 30 days before changes)
 - Mechanism for objection to new sub-processors
-- Use today's date as the last updated date
+- The last updated date MUST be exactly: ${today}
 
 Known sub-processor details for accuracy:
 - AWS (Seattle, US): cloud infrastructure
@@ -125,6 +141,25 @@ Known sub-processor details for accuracy:
 - Cloudflare (San Francisco, US): CDN and security
 - Auth0 (Bellevue, US): identity management
 - Clerk (San Francisco, US): authentication
+- Railway (San Francisco, US): cloud hosting
+- Fly.io (Chicago, US): edge hosting
+- DigitalOcean (New York, US): cloud infrastructure
+- Heroku (San Francisco, US): cloud platform
+- PlanetScale (San Francisco, US): MySQL database
+- Neon (San Francisco, US): serverless Postgres
+- MongoDB Atlas (New York, US): document database
+- Redis Cloud (Mountain View, US): in-memory database
+- Cloudflare R2 (San Francisco, US): object storage
+- LemonSqueezy (Wilmington, US): payment processing
+- Chargebee (San Francisco, US): subscription billing
+- PayPal (San Jose, US): payment processing
+- Mailgun (San Antonio, US): email delivery
+- AWS SES (Seattle, US): email delivery
+- Crisp (Nantes, France): customer messaging
+- LogRocket (Boston, US): session replay and monitoring
+- Datadog (New York, US): infrastructure monitoring
+- Plausible (Tartu, Estonia/EU): privacy-friendly analytics
+- NextAuth.js: self-hosted, not a sub-processor — do NOT include
 
 CRITICAL FORMATTING RULES:
 - Output raw Markdown only — do NOT wrap in code fences or backticks
