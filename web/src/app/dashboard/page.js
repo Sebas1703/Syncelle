@@ -75,7 +75,7 @@ export default function Dashboard() {
   };
 
   const isSubscribed = subscription &&
-    (subscription.status === 'active' || subscription.status === 'trialing') &&
+    (subscription.status === 'active' || subscription.status === 'on_trial') &&
     new Date(subscription.current_period_end) > new Date();
 
   const handleCheckout = async (plan) => {
@@ -83,7 +83,7 @@ export default function Dashboard() {
     setCheckoutLoading(true);
 
     try {
-      const response = await fetch('/api/stripe/checkout', {
+      const response = await fetch('/api/lemonsqueezy/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -60,11 +60,11 @@ CREATE POLICY "Users can delete own documents"
 CREATE TABLE IF NOT EXISTS subscriptions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE NOT NULL,
-  stripe_customer_id TEXT,
-  stripe_subscription_id TEXT,
-  status TEXT NOT NULL DEFAULT 'inactive', -- 'active', 'trialing', 'past_due', 'canceled', 'inactive'
+  lemonsqueezy_subscription_id TEXT,
+  status TEXT NOT NULL DEFAULT 'inactive', -- 'active', 'on_trial', 'past_due', 'cancelled', 'expired', 'inactive'
   plan TEXT DEFAULT 'monthly', -- 'monthly' or 'annual'
   current_period_end TIMESTAMPTZ,
+  ends_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

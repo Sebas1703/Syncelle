@@ -22,7 +22,7 @@ export async function POST(request) {
       .single();
 
     const isActive = subscription &&
-      (subscription.status === 'active' || subscription.status === 'trialing') &&
+      (subscription.status === 'active' || subscription.status === 'on_trial') &&
       new Date(subscription.current_period_end) > new Date();
 
     if (!isActive) {
