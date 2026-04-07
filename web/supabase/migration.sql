@@ -55,3 +55,25 @@ CREATE POLICY "Users can update own documents"
 CREATE POLICY "Users can delete own documents"
   ON documents FOR DELETE
   USING (auth.uid() = user_id);
+
+-- 5. Subscriptions (Stripe integration)
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE UNIQUE NOT NULL,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  status TEXT NOT NULL DEFAULT 'inactive', -- 'active', 'trialing', 'past_due', 'canceled', 'inactive'
+  plan TEXT DEFAULT 'monthly', -- 'monthly' or 'annual'
+  current_period_end TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+
+-- Users can read their own subscription (for dashboard)
+CREATE POLICY "Users can view own subscription"
+  ON subscriptions FOR SELECT
+  USING (auth.uid() = user_id);
+
+-- Only service role (webhook) can insert/update subscriptions — no user-side policies for write

@@ -1,11 +1,32 @@
 import { buildPrompt } from '@/lib/prompts';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
 
 export async function POST(request) {
   try {
-    const { doc_type, questionnaire_data } = await request.json();
+    const { doc_type, questionnaire_data, user_id } = await request.json();
 
-    if (!doc_type || !questionnaire_data) {
-      return Response.json({ error: 'Missing doc_type or questionnaire_data' }, { status: 400 });
+    if (!doc_type || !questionnaire_data || !user_id) {
+      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Check active subscription
+    const { data: subscription } = await supabaseAdmin
+      .from('subscriptions')
+      .select('status, current_period_end')
+      .eq('user_id', user_id)
+      .single();
+
+    const isActive = subscription &&
+      (subscription.status === 'active' || subscription.status === 'trialing') &&
+      new Date(subscription.current_period_end) > new Date();
+
+    if (!isActive) {
+      return Response.json({ error: 'SUBSCRIPTION_REQUIRED' }, { status: 403 });
     }
 
     const prompt = buildPrompt(doc_type, questionnaire_data);
