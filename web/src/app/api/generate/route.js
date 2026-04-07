@@ -41,11 +41,14 @@ export async function POST(request) {
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content;
+    let content = data.choices?.[0]?.message?.content;
 
     if (!content) {
       return Response.json({ error: 'No content generated' }, { status: 500 });
     }
+
+    // Strip code fences if the AI wraps output in ```markdown ... ```
+    content = content.replace(/^```(?:markdown)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
 
     return Response.json({ content });
   } catch (err) {
