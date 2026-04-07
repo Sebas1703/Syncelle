@@ -19,16 +19,14 @@ export default function SignupPage() {
     setError(null);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/onboarding`,
         }
       });
-
       if (error) throw error;
-
       setSuccess(true);
     } catch (err) {
       setError(err.message);
@@ -46,22 +44,22 @@ export default function SignupPage() {
               S
             </div>
           </Link>
-          <h1 className="text-3xl font-bold mb-2 text-white">Crea tu cuenta</h1>
-          <p className="text-zinc-400">Empieza a diseñar el futuro hoy mismo.</p>
+          <h1 className="text-3xl font-bold mb-2 text-white">Create your account</h1>
+          <p className="text-zinc-400">Get your compliance docs in under 10 minutes.</p>
         </div>
 
         {success ? (
           <div className="bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-2xl text-center">
-            <h2 className="text-emerald-400 font-bold mb-2">¡Casi listo!</h2>
+            <h2 className="text-emerald-400 font-bold text-xl mb-2">Check your inbox</h2>
             <p className="text-zinc-300 text-sm">
-              Hemos enviado un correo de confirmación a <span className="text-white font-medium">{email}</span>. 
-              Verifica tu bandeja de entrada para continuar.
+              We sent a confirmation email to <span className="text-white font-medium">{email}</span>.
+              Click the link to activate your account.
             </p>
-            <button 
+            <button
               onClick={() => router.push('/login')}
               className="mt-6 text-sm text-emerald-400 hover:underline"
             >
-              Ir al inicio de sesión
+              Go to login
             </button>
           </div>
         ) : (
@@ -73,39 +71,40 @@ export default function SignupPage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Correo electrónico</label>
-              <input 
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Email</label>
+              <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-                placeholder="tu@ejemplo.com"
+                placeholder="you@company.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Contraseña</label>
-              <input 
+              <label className="block text-sm font-medium text-zinc-400 mb-2">Password</label>
+              <input
                 type="password"
                 required
+                minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-                placeholder="••••••••"
+                placeholder="Min. 6 characters"
               />
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className="w-full bg-white hover:bg-zinc-200 text-black font-bold py-4 rounded-xl transition-all active:scale-95 disabled:opacity-50"
             >
-              {loading ? 'Creando cuenta...' : 'Registrarse'}
+              {loading ? 'Creating account...' : 'Create Account'}
             </button>
 
             <p className="text-center text-zinc-500 text-sm">
-              ¿Ya tienes una cuenta? <Link href="/login" className="text-white hover:text-emerald-400 transition-colors font-medium">Inicia sesión</Link>
+              Already have an account? <Link href="/login" className="text-white hover:text-emerald-400 transition-colors font-medium">Log in</Link>
             </p>
           </form>
         )}
@@ -113,4 +112,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
