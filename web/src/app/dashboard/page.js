@@ -110,8 +110,54 @@ export default function Dashboard() {
       return;
     }
 
+    setGenerating(true);
+    const currentUser = user;
+    const currentProfile = profile;
+    const errors = [];
+
     for (const doc of DOC_TYPES) {
-      await handleGenerate(doc.key);
+      setGeneratingDoc(doc.key);
+      try {
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            doc_type: doc.key,
+            questionnaire_data: currentProfile.questionnaire_data,
+          }),
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error || 'Generation failed');
+        }
+
+        const { content } = await response.json();
+
+        const { error } = await supabase
+          .from('documents')
+          .upsert({
+            user_id: currentUser.id,
+            doc_type: doc.key,
+            content: content,
+            company_name: currentProfile.company_name,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: 'user_id,doc_type' })
+          .select()
+          .single();
+
+        if (error) throw error;
+      } catch (err) {
+        errors.push(`${doc.title}: ${err.message}`);
+      }
+    }
+
+    setGenerating(false);
+    setGeneratingDoc(null);
+    await loadData();
+
+    if (errors.length > 0) {
+      alert('Some documents failed:\n' + errors.join('\n'));
     }
   };
 
